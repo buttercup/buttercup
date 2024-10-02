@@ -1,0 +1,34 @@
+{
+    "name": "Buttercup",
+    "version": "3.0.0",
+    "description": "Buttercup Password Manager",
+    "type": "module",
+    "scripts": {
+        "clean": "rimraf dist",
+        "start": "concurrently \"npm run start:ui:build\" \"npm run start:ui:run\"",
+        "start:ui:build": "cross-env NODE_OPTIONS=\"--loader ts-node/esm\" webpack --config webpack.config.ts --mode development --watch",
+        "start:ui:run": "electron ."
+    },
+    "license": "GPL-3.0",
+    "devDependencies": {
+        "@tamagui/config": "^1.112.7",
+        "@types/react": "^18.3.10",
+        "@types/react-dom": "^18.3.0",
+        "@types/webpack": "^5.28.5",
+        "concurrently": "^9.0.1",
+        "cross-env": "^7.0.3",
+        "css-loader": "^7.1.2",
+        "electron": "^32.1.2",
+        "pug-plugin": "^5.3.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-native-web": "^0.19.12",
+        "resolve-typescript-plugin": "^2.0.1",
+        "rimraf": "^6.0.1",
+        "sass": "^1.79.4",
+        "sass-loader": "^16.0.2",
+        "tamagui": "^1.112.7",
+        "ts-loader": "^9.5.1",
+        "webpack-cli": "^5.1.4"
+    }
+}

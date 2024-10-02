@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "strict": true,
+        "target": "es2020"
+    },
+    "include": ["applications/*/src/**/*.ts", "packages/*/src/**/*.ts"]
+}
