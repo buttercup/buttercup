@@ -1,0 +1,11 @@
+{
+    "name": "@buttercup/interop",
+    "private": true,
+    "description": "Interoperability between Buttercup projects",
+    "type": "module",
+    "exports": "./dist/index.js",
+    "scripts": {
+        "build": "npm run clean && tsc",
+        "clean": "rimraf dist"
+    }
+}
