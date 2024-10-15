@@ -1,9 +1,10 @@
 import { app } from "electron";
 import { BUTTERCUP_PROTOCOL } from "@buttercup/interop";
-import { openMenuWindow } from "./services/windows.js";
+import { focusLastWindowOrOpenNew } from "./services/windows.js";
 
 async function initialise() {
     await app.whenReady();
+    await focusLastWindowOrOpenNew();
 }
 
 // **
@@ -19,8 +20,8 @@ app.on("window-all-closed", (event: Event) => {
     event.preventDefault();
 });
 
-app.on("activate", () => {
-    openMenuWindow();
+app.on("activate", async () => {
+    await focusLastWindowOrOpenNew();
 });
 
 // **
@@ -28,7 +29,7 @@ app.on("activate", () => {
 // **
 
 app.on("second-instance", async (event, args) => {
-    await openMenuWindow();
+    await focusLastWindowOrOpenNew();
     // Protocol URL for Linux/Windows
     const protocolURL = args.find((arg) => arg.startsWith(BUTTERCUP_PROTOCOL));
     if (protocolURL) {

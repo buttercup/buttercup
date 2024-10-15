@@ -4,7 +4,7 @@
         "baseUrl": ".",
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "module": "esnext",
+        "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "strict": true,
         "target": "es2020"

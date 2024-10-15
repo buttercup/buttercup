@@ -8,5 +8,5 @@
         "compilerOptions": {},
         "files": true
     },
-    "include": ["source/**/*.ts", "source/**/*.tsx", "webpack.config.ts", "pug-plugin.d.ts"]
+    "include": ["source/**/*.ts", "source/**/*.tsx"]
 }

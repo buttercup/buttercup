@@ -6,13 +6,14 @@
         "packages/*"
     ],
     "scripts": {
-        "build": "npm run build --workspaces"
+        "build": "npm run build --workspaces",
+        "build:packages": "npm run --workspace=packages/** build",
+        "clean": "npm run clean --workspaces"
     },
     "license": "GPL-3.0",
     "devDependencies": {
         "@types/node": "^22.7.4",
         "rimraf": "^6.0.1",
-        "ts-node": "^10.9.2",
         "typescript": "^5.6.2"
     }
 }
