@@ -16,8 +16,8 @@ if (!lock) {
     app.quit();
 }
 
-app.on("window-all-closed", (event: Event) => {
-    event.preventDefault();
+app.on("window-all-closed", () => {
+    // @todo: Handle this?
 });
 
 app.on("activate", async () => {
