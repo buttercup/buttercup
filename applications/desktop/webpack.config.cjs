@@ -1,6 +1,5 @@
 const path = require("node:path");
 const webpack = require("webpack");
-const ResolveTypeScriptPlugin = require("resolve-typescript-plugin");
 const PugPlugin = require("pug-plugin");
 
 const { DefinePlugin } = webpack;
@@ -8,7 +7,7 @@ const DIRNAME = __dirname;
 
 module.exports = [
     {
-        devtool: false,
+        // devtool: false,
 
         entry: {
             index: path.join(DIRNAME, "./source/ui/index.pug")
@@ -82,17 +81,20 @@ module.exports = [
 
         resolve: {
             alias: {
-                "react-native$": "react-native-web"
+                "react-native$": "react-native-web",
+                'react-native-svg': "@tamagui/react-native-svg"
             },
-            // No .ts/.tsx included due to the typescript resolver plugin
-            extensions: [".js", ".jsx"],
-            plugins: [
-                // Handle .ts => .js resolution
-                new ResolveTypeScriptPlugin()
-            ]
+            // extensions: [".js", ".jsx"],
+            extensions: [".web.tsx", ".web.ts", ".web.js", ".ts", ".tsx", ".js", ".jsx"],
+            extensionAlias: {
+                ".js": [".ts", ".js"],
+                ".jsx": [".tsx", ".jsx"],
+                ".mjs": [".mts", ".mjs"]
+            }
         },
 
         target: "web",
+        // target: "electron-renderer",
 
         watchOptions: {
             poll: 1000,
@@ -145,11 +147,11 @@ module.exports = [
 
         resolve: {
             // No .ts included due to the typescript resolver plugin
-            extensions: [".js"],
-            plugins: [
-                // Handle .ts => .js resolution
-                new ResolveTypeScriptPlugin()
-            ]
+            // extensions: [".ts", ".tsx", ".js"],
+            extensionAlias: {
+                ".js": [".ts", ".js"],
+                ".mjs": [".mts", ".mjs"]
+            }
         },
 
         // target: "electron-main",

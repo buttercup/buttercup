@@ -64,18 +64,6 @@ export async function openNewVaultWindow(): Promise<BrowserWindow> {
     win.loadFile(path.join(root, "dist/ui/index.html"));
     await loadedPromise;
 
-    // win.center();
-    // win.show();
-    // win.setAlwaysOnTop(true);
-    // win.show();
-    // win.setAlwaysOnTop(false);
-    // app.focus();
-
-    // win.show();
-    // setTimeout(() => {
-    //     win.moveTop();
-    // }, 1);
-
     win.show();
     app.focus();
 

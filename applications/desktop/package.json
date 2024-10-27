@@ -12,6 +12,8 @@
     "license": "GPL-3.0",
     "devDependencies": {
         "@tamagui/config": "^1.112.7",
+        "@tamagui/lucide-icons": "^1.115.4",
+        "@tamagui/react-native-svg": "^1.116.9",
         "@types/react": "^18.3.10",
         "@types/react-dom": "^18.3.0",
         "css-loader": "^7.1.2",
@@ -20,11 +22,11 @@
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-native-web": "^0.19.12",
-        "resolve-typescript-plugin": "^2.0.1",
         "sass": "^1.79.4",
         "sass-loader": "^16.0.2",
         "tamagui": "^1.112.7",
         "ts-loader": "^9.5.1",
+        "webpack": "^5.95.0",
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
