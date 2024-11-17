@@ -11,6 +11,8 @@
     },
     "license": "GPL-3.0",
     "devDependencies": {
+        "@dicebear/collection": "^9.2.2",
+        "@dicebear/core": "^9.2.2",
         "@tamagui/config": "^1.116.9",
         "@tamagui/lucide-icons": "^1.116.9",
         "@tamagui/react-native-svg": "^1.116.9",
