@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "outDir": "./dist/node",
+        "module": "es2020",
+        "moduleResolution": "node",
+        "declaration": true,
+        "target": "es2020"
+    },
+    "include": [
+        "./source/**/*"
+    ],
+    "exclude":[
+        "./source/index.web.ts",
+        "./source/web/**/*"
+    ]
+}

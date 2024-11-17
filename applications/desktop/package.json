@@ -1,37 +1,38 @@
 {
-    "name": "Buttercup",
-    "version": "3.0.0",
-    "description": "Buttercup Password Manager",
-    "main": "./dist/backend/index.js",
-    "type": "module",
-    "scripts": {
-        "clean": "rimraf dist",
-        "dev": "webpack --config webpack.config.cjs --mode development --watch",
-        "start": "electron ."
-    },
-    "license": "GPL-3.0",
-    "devDependencies": {
-        "@dicebear/collection": "^9.2.2",
-        "@dicebear/core": "^9.2.2",
-        "@tamagui/config": "^1.116.9",
-        "@tamagui/lucide-icons": "^1.116.9",
-        "@tamagui/react-native-svg": "^1.116.9",
-        "@types/react": "^18.3.12",
-        "@types/react-dom": "^18.3.1",
-        "css-loader": "^7.1.2",
-        "electron": "^33.0.2",
-        "pug-plugin": "^5.3.0",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1",
-        "react-native-web": "^0.19.13",
-        "sass": "^1.80.4",
-        "sass-loader": "^16.0.2",
-        "tamagui": "^1.116.9",
-        "ts-loader": "^9.5.1",
-        "webpack": "^5.95.0",
-        "webpack-cli": "^5.1.4"
-    },
-    "dependencies": {
-        "@buttercup/interop": "*"
-    }
+  "name": "Buttercup",
+  "version": "3.0.0",
+  "description": "Buttercup Password Manager",
+  "main": "./dist/backend/index.js",
+  "type": "module",
+  "scripts": {
+    "clean": "rimraf dist",
+    "dev": "webpack --config webpack.config.cjs --mode development --watch",
+    "start": "electron ."
+  },
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@dicebear/collection": "^9.2.2",
+    "@dicebear/core": "^9.2.2",
+    "@tamagui/config": "^1.116.9",
+    "@tamagui/lucide-icons": "^1.116.9",
+    "@tamagui/react-native-svg": "^1.116.9",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "css-loader": "^7.1.2",
+    "electron": "^33.0.2",
+    "pug-plugin": "^5.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-native-web": "^0.19.13",
+    "sass": "^1.80.4",
+    "sass-loader": "^16.0.2",
+    "tamagui": "^1.116.9",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@buttercup/core": "*",
+    "@buttercup/interop": "*"
+  }
 }
