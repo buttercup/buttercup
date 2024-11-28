@@ -8,7 +8,7 @@ import { VaultLockedPage } from "./pages/VaultLockedPage.jsx";
 export function App() {
     return (
         <TamaguiProvider config={appConfig}>
-            <VaultLockedPage />
+            <VaultPage />
         </TamaguiProvider>
     );
 }

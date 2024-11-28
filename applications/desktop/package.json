@@ -16,6 +16,8 @@
     "@tamagui/config": "^1.116.9",
     "@tamagui/lucide-icons": "^1.116.9",
     "@tamagui/react-native-svg": "^1.116.9",
+    "@types/debounce": "^1.2.4",
+    "@types/log-rotate": "^0.2.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "css-loader": "^7.1.2",
@@ -33,6 +35,10 @@
   },
   "dependencies": {
     "@buttercup/core": "*",
-    "@buttercup/interop": "*"
+    "@buttercup/interop": "*",
+    "debounce": "^2.2.0",
+    "layerr": "^3.0.0",
+    "log-rotate": "^0.2.8",
+    "stacktracey": "^2.1.8"
   }
 }
