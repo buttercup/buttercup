@@ -3,6 +3,7 @@ import { createAvatar } from '@dicebear/core';
 import { rings } from '@dicebear/collection';
 
 export interface VaultIconProps {
+    size: number;
     vaultID: string;
 }
 
@@ -15,7 +16,7 @@ export function VaultIcon(props: VaultIconProps) {
         ringColor: ["4db6ac","4dd0e1","4fc3f7"],
         scale: 85,
         seed: props.vaultID,
-        size: 120
+        size: props.size
       }), [props.vaultID]);
     return (
         <div dangerouslySetInnerHTML={{ __html: iconSVG }} />
