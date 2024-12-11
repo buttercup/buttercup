@@ -56,7 +56,6 @@ module.exports = [
             filename: "ui.js",
             path: path.resolve(DIRNAME, "./dist/ui"),
             assetModuleFilename: "[path][name].[hash][ext]",
-            // publicPath: "/"
         },
 
         plugins: [
@@ -80,10 +79,6 @@ module.exports = [
         ],
 
         resolve: {
-            alias: {
-                "react-native$": "react-native-web",
-                'react-native-svg': "@tamagui/react-native-svg"
-            },
             // extensions: [".js", ".jsx"],
             extensions: [".web.tsx", ".web.ts", ".web.js", ".ts", ".tsx", ".js", ".jsx"],
             extensionAlias: {
@@ -141,8 +136,6 @@ module.exports = [
             filename: "index.js",
             path: path.resolve(DIRNAME, "./dist/backend"),
             module: true
-            // libraryTarget: "commonjs2",
-            // path: path.resolve(__dirname, "./build/main")
         },
 
         resolve: {
@@ -154,9 +147,7 @@ module.exports = [
             }
         },
 
-        // target: "electron-main",
         target: "node20",
-        // target: "async-node",
 
         watchOptions: {
             poll: 1000,
