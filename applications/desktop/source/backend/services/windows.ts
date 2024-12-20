@@ -33,8 +33,8 @@ export async function focusLastWindowOrOpenNew(): Promise<BrowserWindow> {
 
 export async function openNewVaultWindow(): Promise<BrowserWindow> {
     const config: BrowserWindowConstructorOptions = {
-        width: 300,
-        height: 420,
+        width: 800,
+        height: 540,
         icon: getIconPath(),
         webPreferences: {
             contextIsolation: false,

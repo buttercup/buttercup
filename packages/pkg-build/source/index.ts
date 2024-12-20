@@ -51,10 +51,11 @@ async function init() {
 
     console.log(chalk.bgWhite.black.bold(" PkgBuild "));
     console.log(chalk.green("┌────────────────────────────────────────»"));
-    console.log(chalk.green("│") + chalk.bold("Application:") + applicationPath);
-    console.log(chalk.green("│") + chalk.bold("Packages:"));
+    console.log(chalk.green("│ ") + chalk.bold("Application:"));
+    console.log(chalk.green("│ ") + chalk.blueBright(" · ") + applicationPath);
+    console.log(chalk.green("│ ") + chalk.bold("Packages:"));
     for (const pkg of workspacePackages) {
-        console.log(chalk.green("│") + chalk.blueBright(" · ") + pkg.name);
+        console.log(chalk.green("│ ") + chalk.blueBright(" · ") + pkg.name);
     }
     console.log(chalk.green("└────────────────────────────────────────»"));
 
