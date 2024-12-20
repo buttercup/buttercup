@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf dist",
-    "dev": "webpack --config webpack.config.cjs --mode development --watch",
+    "dev": "pkg-build . --root=../.. --command=\"sleep 5 && npm run dev:desktop\"",
+    "dev:desktop": "webpack --config webpack.config.cjs --mode development --watch",
     "start": "electron ."
   },
   "license": "GPL-3.0",
@@ -35,6 +36,7 @@
   "dependencies": {
     "@buttercup/core": "*",
     "@buttercup/interop": "*",
+    "@buttercup/pkg-build": "*",
     "debounce": "^2.2.0",
     "layerr": "^3.0.0",
     "log-rotate": "^0.2.8",

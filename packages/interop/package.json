@@ -6,6 +6,7 @@
     "exports": "./dist/index.js",
     "scripts": {
         "build": "npm run clean && tsc",
+        "dev": "npm run clean && tsc --watch",
         "clean": "rimraf dist"
     }
 }

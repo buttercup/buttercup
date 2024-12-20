@@ -1,0 +1,19 @@
+{
+  "name": "@buttercup/pkg-build",
+  "private": true,
+  "description": "Dynamic workspace package builder.",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "bin": "./source/index.ts",
+  "scripts": {},
+  "dependencies": {
+    "chalk": "^5.4.0",
+    "concurrently": "^9.1.0",
+    "minimist": "^1.2.8",
+    "ts-node": "^10.9.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/minimist": "^1.2.5"
+  }
+}
