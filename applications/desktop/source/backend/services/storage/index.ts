@@ -3,8 +3,9 @@ import envPaths from "env-paths";
 import { VaultSourceID } from "@buttercup/core";
 import { FileStorage } from "./FileStorage.js";
 import { Environment } from "../../library/environment.js";
+import { ensureEnvironmentDirectories } from "./environment.js";
 
-interface EnvPaths {
+export interface EnvPaths {
     data: string;
     config: string;
     cache: string;
@@ -91,7 +92,7 @@ export function getVaultStoragePath(): string {
     return path.join(__envPaths.data, "vaults.json");
 }
 
-export function initialise(environment: Environment): void {
+export async function initialise(environment: Environment): Promise<void> {
     if (environment.buttercupHomeDir) {
         __envPaths = {
             data: path.join(environment.buttercupHomeDir, "data"),
@@ -116,4 +117,7 @@ export function initialise(environment: Environment): void {
             temp: TEMP_ENV_PATHS.temp,
         };
     }
+
+    // Try creating paths
+    await ensureEnvironmentDirectories(__envPaths);
 }

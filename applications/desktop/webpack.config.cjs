@@ -111,6 +111,7 @@ module.exports = [
             "electron",
             "express",
             "keytar",
+            "stacktracey",
             "zod"
         ].reduce((output, name) => ({ ...output, [name]: name }), {}),
 

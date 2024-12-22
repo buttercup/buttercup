@@ -1,9 +1,14 @@
 import { app } from "electron";
 import { BUTTERCUP_PROTOCOL } from "@buttercup/interop";
 import { focusLastWindowOrOpenNew } from "./services/windows.js";
+import { initialise as initialiseStorage } from "./services/storage/index.js";
+import { getEnvironment } from "./library/environment.js";
 
 async function initialise() {
+    const environment = getEnvironment();
+
     await app.whenReady();
+    await initialiseStorage(environment);
     await focusLastWindowOrOpenNew();
 }
 

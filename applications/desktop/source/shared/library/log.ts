@@ -9,7 +9,8 @@ export function serialiseLogItems(items: Array<any>): string {
             } else if (next instanceof Date) {
                 value = next.toISOString();
             } else if (next instanceof Error) {
-                value = `${next.toString()}\n${new StackTracey(next).withSources().asTable()}`;
+                const stack = new StackTracey(next);
+                value = `${next.toString()}\n${stack.withSources().asTable()}`;
             } else if (typeof next === "undefined" || next === null) {
                 // Do nothing
             } else {
