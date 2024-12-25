@@ -101,8 +101,7 @@ module.exports = [
             }
         },
 
-        target: "web",
-        // target: "electron-renderer",
+        target: "electron-renderer",
 
         watchOptions: {
             poll: 1000,

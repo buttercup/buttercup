@@ -47,6 +47,10 @@ export interface DatasourceConfig {
     [key: string]: string | null;
 }
 
+export interface IPCInterface {
+    local_file_browse_existing: () => { filePath: string | null; };
+}
+
 export interface Language {
     name: string;
     slug: string | null;
