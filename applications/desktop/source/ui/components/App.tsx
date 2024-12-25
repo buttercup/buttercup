@@ -1,5 +1,5 @@
 import React from "react";
-import { App as Application, ConfigProvider } from 'antd';
+import { App as Application, ConfigProvider } from "antd";
 import { useTheme } from "../hooks/theme.js";
 import { RouterPrimary } from "./RouterPrimary.jsx";
 

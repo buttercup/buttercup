@@ -52,7 +52,7 @@ app.on("open-url", (e, url) => {
 // ** Boot
 // **
 
-initialise().catch(err => {
+initialise().catch((err) => {
     console.error(err);
     app.quit();
 });

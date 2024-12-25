@@ -1,4 +1,9 @@
-import { AppStartMode, Preferences, ThemeSource, VaultSettingsLocal } from "./types.js";
+import {
+    AppStartMode,
+    Preferences,
+    ThemeSource,
+    VaultSettingsLocal
+} from "./types.js";
 
 export const COLOURS = {
     DARK_PRIMARY: "#292C33",

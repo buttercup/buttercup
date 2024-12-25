@@ -1,10 +1,17 @@
 import fs from "fs/promises";
 import { VaultSourceID } from "@buttercup/core";
-import { getConfigStorage, getVaultSettingsPath, getVaultSettingsStorage } from "./storage/index.js";
+import {
+    getConfigStorage,
+    getVaultSettingsPath,
+    getVaultSettingsStorage
+} from "./storage/index.js";
 import { naiveClone } from "../../shared/library/clone.js";
 import { logErr, logInfo } from "../library/log.js";
 import { runConfigMigrations } from "./migration.js";
-import { PREFERENCES_DEFAULT, VAULT_SETTINGS_DEFAULT } from "../../shared/symbols.js";
+import {
+    PREFERENCES_DEFAULT,
+    VAULT_SETTINGS_DEFAULT
+} from "../../shared/symbols.js";
 import { Config, Preferences, VaultSettingsLocal } from "../types.js";
 
 const DEFAULT_CONFIG: Config = {
@@ -21,13 +28,19 @@ const DEFAULT_CONFIG: Config = {
     windowY: null
 };
 
-export async function getConfigValue<K extends keyof Config>(key: K): Promise<Config[K]> {
+export async function getConfigValue<K extends keyof Config>(
+    key: K
+): Promise<Config[K]> {
     const storage = getConfigStorage();
     const value = await storage.getValue(key);
-    return typeof value === "undefined" || value === null ? DEFAULT_CONFIG[key] || null : value;
+    return typeof value === "undefined" || value === null
+        ? DEFAULT_CONFIG[key] || null
+        : value;
 }
 
-export async function getVaultSettings(sourceID: VaultSourceID): Promise<VaultSettingsLocal> {
+export async function getVaultSettings(
+    sourceID: VaultSourceID
+): Promise<VaultSettingsLocal> {
     const storage = getVaultSettingsStorage(sourceID);
     const keys = await storage.getAllKeys();
     if (keys.length === 0) return naiveClone(VAULT_SETTINGS_DEFAULT);
@@ -57,8 +70,13 @@ export async function initialise(): Promise<void> {
     const preferences = naiveClone(await getConfigValue("preferences"));
     for (const key in PREFERENCES_DEFAULT) {
         const preference = key as keyof Preferences;
-        if (PREFERENCES_DEFAULT.hasOwnProperty(preference) && typeof preferences[preference] === "undefined") {
-            logInfo(`Adding new preference key: ${preference} => ${PREFERENCES_DEFAULT[preference]}`);
+        if (
+            PREFERENCES_DEFAULT.hasOwnProperty(preference) &&
+            typeof preferences[preference] === "undefined"
+        ) {
+            logInfo(
+                `Adding new preference key: ${preference} => ${PREFERENCES_DEFAULT[preference]}`
+            );
             // @ts-ignore
             preferences[preference] = PREFERENCES_DEFAULT[preference];
         }
@@ -67,7 +85,9 @@ export async function initialise(): Promise<void> {
     await setConfigValue("preferences", preferences);
 }
 
-export async function removeVaultSettings(sourceID: VaultSourceID): Promise<void> {
+export async function removeVaultSettings(
+    sourceID: VaultSourceID
+): Promise<void> {
     const path = getVaultSettingsPath(sourceID);
     try {
         await fs.unlink(path);

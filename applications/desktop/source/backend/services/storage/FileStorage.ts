@@ -30,7 +30,9 @@ export class FileStorage extends StorageInterface {
         return typeof data[name] !== "undefined" ? data[name] : null;
     }
 
-    async getValues(properties?: Array<string>): Promise<Record<string, unknown>> {
+    async getValues(
+        properties?: Array<string>
+    ): Promise<Record<string, unknown>> {
         const data = await this._getContents();
         if (!Array.isArray(properties)) {
             return { ...data };

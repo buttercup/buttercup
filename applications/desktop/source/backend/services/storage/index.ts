@@ -98,14 +98,14 @@ export async function initialise(environment: Environment): Promise<void> {
             data: path.join(environment.buttercupHomeDir, "data"),
             config: path.join(
                 environment.buttercupConfigDir || environment.buttercupHomeDir,
-                "config",
+                "config"
             ),
             cache: path.join(environment.buttercupHomeDir, "cache"),
             log: path.join(environment.buttercupHomeDir, "log"),
             temp: path.join(
                 environment.buttercupTempDir || environment.buttercupHomeDir,
-                "temp",
-            ),
+                "temp"
+            )
         };
     } else {
         const TEMP_ENV_PATHS = envPaths("buttercup-desktop-v3");
@@ -114,7 +114,7 @@ export async function initialise(environment: Environment): Promise<void> {
             config: TEMP_ENV_PATHS.config,
             cache: TEMP_ENV_PATHS.cache,
             log: TEMP_ENV_PATHS.log,
-            temp: TEMP_ENV_PATHS.temp,
+            temp: TEMP_ENV_PATHS.temp
         };
     }
 

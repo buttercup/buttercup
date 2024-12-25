@@ -1,5 +1,10 @@
 import path from "node:path";
-import { BrowserWindow, BrowserWindowConstructorOptions, app, shell } from "electron";
+import {
+    BrowserWindow,
+    BrowserWindowConstructorOptions,
+    app,
+    shell
+} from "electron";
 import { isLinux, isWindows } from "../library/platform.js";
 import { getRootProjectPath } from "../library/paths.js";
 import { getConfigValue, setConfigValue } from "./config.js";
@@ -18,7 +23,11 @@ export async function closeWindows(): Promise<void> {
 }
 
 function getIconPath(): string {
-    const trayPath = isWindows() ? "tray.ico" : isLinux() ? "tray-linux.png" : "trayTemplate.png";
+    const trayPath = isWindows()
+        ? "tray.ico"
+        : isLinux()
+          ? "tray-linux.png"
+          : "trayTemplate.png";
     const root = getRootProjectPath();
     return path.join(root, "resources/icons", trayPath);
 }
@@ -63,15 +72,14 @@ export async function openNewVaultWindow(): Promise<BrowserWindow> {
     });
     win.on("resized", () => {
         const [width, height] = win.getSize();
-        Promise
-            .all([
-                setConfigValue("windowHeight", height),
-                setConfigValue("windowWidth", width)
-            ])
+        Promise.all([
+            setConfigValue("windowHeight", height),
+            setConfigValue("windowWidth", width)
+        ])
             .then(() => {
                 logInfo(`Window resized: ${width}x${height}`);
             })
-            .catch(err => {
+            .catch((err) => {
                 logErr("Failed storing window size update", err);
             });
     });

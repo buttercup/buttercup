@@ -25,26 +25,26 @@ function getVaultTypes() {
             name: "Local",
             type: SourceType.File,
             icon: <AppleOutlined style={{ fontSize: "48px" }} />,
-            description: "Store passwords locally with strong encryption",
+            description: "Store passwords locally with strong encryption"
         },
         {
             name: "Dropbox",
             type: SourceType.Dropbox,
             icon: <DropboxOutlined style={{ fontSize: "48px" }} />,
-            description: "Sync passwords securely across devices",
+            description: "Sync passwords securely across devices"
         },
         {
             name: "Google Drive",
             type: SourceType.GoogleDrive,
             icon: <GoogleOutlined style={{ fontSize: "48px" }} />,
-            description: "Sync passwords securely across devices",
+            description: "Sync passwords securely across devices"
         },
         {
             name: "WebDAV",
             type: SourceType.WebDAV,
             icon: <CloudUploadOutlined style={{ fontSize: "48px" }} />,
-            description: "Sync passwords securely across devices",
-        },
+            description: "Sync passwords securely across devices"
+        }
     ];
 }
 
@@ -66,12 +66,12 @@ export function LandingPage() {
                         dataSource={[
                             {
                                 title: "Personal Vault",
-                                icon: <VaultIcon size={64} vaultID="abc123" />,
+                                icon: <VaultIcon size={64} vaultID="abc123" />
                             },
                             {
                                 title: "Work Vault",
-                                icon: <VaultIcon size={64} vaultID="def456" />,
-                            },
+                                icon: <VaultIcon size={64} vaultID="def456" />
+                            }
                         ]}
                         renderItem={(item) => (
                             <List.Item>
@@ -89,7 +89,7 @@ export function LandingPage() {
                                                   <DeleteOutlined
                                                       key="delete"
                                                       className="card-actions"
-                                                  />,
+                                                  />
                                               ]
                                             : []
                                     }
@@ -119,7 +119,7 @@ export function LandingPage() {
                         style={{
                             display: "grid",
                             gridTemplateColumns: "1fr 1fr",
-                            gap: "16px",
+                            gap: "16px"
                         }}
                     >
                         {vaultTypes.map((type, index) => (
@@ -127,7 +127,9 @@ export function LandingPage() {
                                 key={index}
                                 hoverable
                                 style={{ textAlign: "center" }}
-                                onClick={() => navigate(`/add-vault/${type.type}`)}
+                                onClick={() =>
+                                    navigate(`/add-vault/${type.type}`)
+                                }
                             >
                                 {type.icon}
                                 <Typography.Title level={4}>

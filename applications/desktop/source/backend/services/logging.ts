@@ -7,7 +7,9 @@ import { getPortableExeDir, isPortable } from "../library/portability.js";
 const LOG_RETENTION = 10;
 
 export function getLogPath(): string {
-    return isPortable() ? path.join(getPortableExeDir(), LOG_FILENAME) : _getLogPath();
+    return isPortable()
+        ? path.join(getPortableExeDir(), LOG_FILENAME)
+        : _getLogPath();
 }
 
 export async function initialise() {

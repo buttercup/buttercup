@@ -8,7 +8,10 @@
     "clean": "rimraf dist",
     "dev": "pkg-build . --root=../.. --command=\"sleep 5 && npm run dev:desktop\"",
     "dev:desktop": "webpack --config webpack.config.cjs --mode development --watch",
-    "start": "electron ."
+    "start": "electron .",
+    "format": "prettier --write .",
+    "test": "npm run test:format",
+    "test:format": "prettier --check ."
   },
   "license": "GPL-3.0",
   "devDependencies": {

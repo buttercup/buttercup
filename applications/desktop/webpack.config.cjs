@@ -55,7 +55,7 @@ module.exports = [
         output: {
             filename: "ui.js",
             path: path.resolve(DIRNAME, "./dist/ui"),
-            assetModuleFilename: "[path][name].[hash][ext]",
+            assetModuleFilename: "[path][name].[hash][ext]"
         },
 
         plugins: [
@@ -71,8 +71,13 @@ module.exports = [
             new DefinePlugin({
                 process: {
                     env: {
-                        DEV: process.env.NODE_ENV === "development" ? "true" : "false",
-                        NODE_ENV: JSON.stringify(process.env.NODE_ENV ?? "production")
+                        DEV:
+                            process.env.NODE_ENV === "development"
+                                ? "true"
+                                : "false",
+                        NODE_ENV: JSON.stringify(
+                            process.env.NODE_ENV ?? "production"
+                        )
                     }
                 }
             })
@@ -80,7 +85,15 @@ module.exports = [
 
         resolve: {
             // extensions: [".js", ".jsx"],
-            extensions: [".web.tsx", ".web.ts", ".web.js", ".ts", ".tsx", ".js", ".jsx"],
+            extensions: [
+                ".web.tsx",
+                ".web.ts",
+                ".web.js",
+                ".ts",
+                ".tsx",
+                ".js",
+                ".jsx"
+            ],
             extensionAlias: {
                 ".js": [".ts", ".js"],
                 ".jsx": [".tsx", ".jsx"],
@@ -104,7 +117,7 @@ module.exports = [
         },
 
         experiments: {
-            outputModule: true,
+            outputModule: true
         },
 
         externals: [

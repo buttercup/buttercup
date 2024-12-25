@@ -43,7 +43,9 @@ export function log(level: LogLevel, items: Array<any>) {
     console.log(logLine);
     __lines.push(logLine);
     if (!__write) {
-        const debouncedFn = debounce(write, WRITE_FREQUENCY, { immediate: false });
+        const debouncedFn = debounce(write, WRITE_FREQUENCY, {
+            immediate: false
+        });
         if (!debouncedFn) {
             throw new Error("Failed debouncing log writer");
         }

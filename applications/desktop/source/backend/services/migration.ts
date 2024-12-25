@@ -2,7 +2,10 @@ import { assertError, Layerr } from "layerr";
 import { naiveClone } from "../../shared/library/clone.js";
 import { AppStartMode, Config } from "../types.js";
 
-export type ConfigMigration = [name: string, migration: (config: Config) => Config | null];
+export type ConfigMigration = [
+    name: string,
+    migration: (config: Config) => Config | null
+];
 
 const MIGRATIONS: Array<ConfigMigration> = [
     [
@@ -30,7 +33,9 @@ const MIGRATIONS: Array<ConfigMigration> = [
     ]
 ];
 
-export function runConfigMigrations(config: Config): [Config, changed: boolean] {
+export function runConfigMigrations(
+    config: Config
+): [Config, changed: boolean] {
     let current = naiveClone(config),
         changed = false;
     for (const [name, execute] of MIGRATIONS) {
