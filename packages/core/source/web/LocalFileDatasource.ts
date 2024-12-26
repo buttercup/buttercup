@@ -6,6 +6,7 @@ import { Credentials } from "../credentials/Credentials.js";
 import {
     CredentialsPayload,
     DatasourceConfiguration,
+    DatasourceConfigurationFile,
     DatasourceLoadedData,
     EncryptedContent,
     History
@@ -26,9 +27,13 @@ export default class LocalFileDatasource extends TextDatasource {
         super(credentials);
         const { data: credentialData } = getCredentials(credentials.id) as CredentialsPayload;
         const { datasource: datasourceConfig } = credentialData;
-        const { path, token } = datasourceConfig as DatasourceConfiguration;
+
+        const { path, token } = datasourceConfig as DatasourceConfigurationFile;
+        if (!token) {
+            throw new Error("No token for local file datasource");
+        }
+
         this._path = path;
-        this._token = token;
         this.client = buildClient(token);
         this.type = "localfile";
         fireInstantiationHandlers("localfile", this);

@@ -48,6 +48,8 @@ export interface DatasourceConfig {
 }
 
 export interface IPCInterface {
+    get_vaults_list: () => Array<VaultSourceDescription>;
+    local_file_add_existing: (name: string, filePath: string, password: string) => void;
     local_file_browse_existing: () => { filePath: string | null; };
 }
 

@@ -81,6 +81,7 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
         handleExistingFileChosen
     );
 
+    const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [unlocking, setUnlocking] = useState<boolean>(false);
     const handleUnlock = useCallback((password: string) => {
@@ -179,7 +180,17 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
                                 variant="outlined"
                             >
                                 <Form.Item
-                                    layout="vertical"
+                                    label="Name"
+                                    name="name"
+                                    rules={[
+                                        {
+                                            required: true
+                                        }
+                                    ]}
+                                >
+                                    <Input type="text" value={name} onChange={evt => setName(evt.target.value)} />
+                                </Form.Item>
+                                <Form.Item
                                     label="Password"
                                     name="password"
                                     rules={[

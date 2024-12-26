@@ -12,6 +12,7 @@ import { useNavigate } from "react-router";
 import { styled } from "styled-components";
 import { VaultIcon } from "../icons/VaultIcon.jsx";
 import { SourceType } from "../../../shared/types.js";
+import { useRepeatingIPCCall } from "../../hooks/ipc.js";
 
 const SourceCard = styled(Card)`
     .ant-card-body {
@@ -51,6 +52,9 @@ function getVaultTypes() {
 export function LandingPage() {
     const vaultTypes = useMemo(getVaultTypes, []);
 
+    const { result: vaultsResult } = useRepeatingIPCCall("get_vaults_list", [], 5000);
+    const vaults = useMemo(() => Array.isArray(vaultsResult) ? vaultsResult : [], [vaultsResult]);
+
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
     const navigate = useNavigate();
@@ -63,16 +67,10 @@ export function LandingPage() {
                     </Typography.Title>
                     <List
                         style={{ width: "100%" }}
-                        dataSource={[
-                            {
-                                title: "Personal Vault",
-                                icon: <VaultIcon size={64} vaultID="abc123" />
-                            },
-                            {
-                                title: "Work Vault",
-                                icon: <VaultIcon size={64} vaultID="def456" />
-                            }
-                        ]}
+                        dataSource={vaults.map(vault => ({
+                            title: vault.name,
+                            icon: <VaultIcon size={64} vaultID={vault.id} />
+                        }))}
                         renderItem={(item) => (
                             <List.Item>
                                 <Card

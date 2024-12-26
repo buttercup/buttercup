@@ -1,6 +1,8 @@
 import { dialog, type BrowserWindow } from "electron";
+import { DatasourceConfigurationFile } from "@buttercup/core";
 import { registerHandler } from "../interface.js";
 import { IPC } from "../types.js";
+import { addVaultFromPayload } from "../../services/buttercup/vaultAddition.js";
 
 async function showExistingVaultFileDialog(win: BrowserWindow): Promise<string | null> {
     const result = await dialog.showOpenDialog(win, {
@@ -18,6 +20,19 @@ async function showExistingVaultFileDialog(win: BrowserWindow): Promise<string |
 }
 
 export function registerLocalFileDatasourceHandlers(ipc: IPC) {
+    registerHandler(ipc, "local_file_add_existing", async function(name: string, filePath: string, password: string) {
+        await addVaultFromPayload({
+            createNew: false,
+            datasourceConfig: {
+                type: "file",
+                path: filePath
+            } satisfies DatasourceConfigurationFile,
+            masterPassword: password,
+            name
+        });
+
+    });
+
     registerHandler(ipc, "local_file_browse_existing", async function() {
         if (!this.callerWindow) {
             throw new Error("No available browser window");

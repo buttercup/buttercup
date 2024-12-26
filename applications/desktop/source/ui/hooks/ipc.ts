@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { IPCInterface } from "../../shared/types.js";
 import { executeIPCHandler } from "../ipc/handler.js";
 
@@ -11,17 +11,13 @@ interface IPCCallHookResult<Name extends keyof IPCInterface> {
 };
 type Status = "idle" | "running";
 
-export function useIPCCall<Name extends keyof IPCInterface>(name: Name): IPCCallHookResult<Name>;
-export function useIPCCall<Name extends keyof IPCInterface>(name: Name, callback: IPCCallback<Name>): IPCCallHookResult<Name>;
-export function useIPCCall<Name extends keyof IPCInterface>(name: Name, callback: IPCCallback<Name>, dependencies: Array<unknown>): IPCCallHookResult<Name>;
+// export function useIPCCall<Name extends keyof IPCInterface>(name: Name): IPCCallHookResult<Name>;
+// export function useIPCCall<Name extends keyof IPCInterface>(name: Name, callback: IPCCallback<Name>): IPCCallHookResult<Name>;
+// export function useIPCCall<Name extends keyof IPCInterface>(name: Name, callback: IPCCallback<Name>): IPCCallHookResult<Name>;
 export function useIPCCall<Name extends keyof IPCInterface>(
     name: Name,
-    callbackOrDependencies: IPCCallback<Name> | Array<unknown> = [],
-    maybeDependencies: Array<unknown> = []
+    callback: IPCCallback<Name> | null = null
 ): IPCCallHookResult<Name> {
-    const callback = typeof callbackOrDependencies === "function" ? callbackOrDependencies : null;
-    const dependencies = Array.isArray(callbackOrDependencies) ? callbackOrDependencies : maybeDependencies;
-
     const [status, setStatus] = useState<Status>("idle");
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<ReturnType<IPCInterface[Name]> | null>(null);
@@ -49,7 +45,7 @@ export function useIPCCall<Name extends keyof IPCInterface>(
                     callback(err.message, null);
                 }
             });
-    }, [name, callback, status, ...dependencies]);
+    }, [name, callback, status]);
 
     return useMemo(() => ({
         error,
@@ -57,4 +53,28 @@ export function useIPCCall<Name extends keyof IPCInterface>(
         result,
         status
     }), [error, execute, result, status]);
+}
+
+export function useRepeatingIPCCall<Name extends keyof IPCInterface>(
+    name: Name,
+    args: Parameters<IPCInterface[Name]>,
+    delayMs: number
+): IPCCallHookResult<Name> {
+    const executeRef = useRef<IPCCallHookResult<Name>["execute"]>(() => {});
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const timerHandler = useCallback(() => {
+        if (timerRef.current !== null) {
+            clearTimeout(timerRef.current);
+        }
+
+        timerRef.current = setTimeout(() => {
+            executeRef.current(...args);
+        }, delayMs);
+    }, [delayMs, args]);
+
+    const output = useIPCCall(name, timerHandler);
+    executeRef.current = output.execute;
+
+    return output;
 }

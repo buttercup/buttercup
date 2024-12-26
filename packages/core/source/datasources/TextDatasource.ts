@@ -7,7 +7,7 @@ import { fireInstantiationHandlers, registerDatasource } from "./register.js";
 import {
     AttachmentDetails,
     BufferLike,
-    DatasourceConfiguration,
+    DatasourceConfigurationText,
     DatasourceLoadedData,
     EncryptedContent,
     History,
@@ -40,7 +40,7 @@ export class TextDatasource extends EventEmitter {
         try {
             const { data: credentialData } = getCredentials(credentials.id);
             const { datasource: datasourceConfig = {} } = credentialData || {};
-            const { content = "" } = datasourceConfig as DatasourceConfiguration;
+            const { content = "" } = datasourceConfig as DatasourceConfigurationText;
             this._content = content;
         } catch (err) {}
         this.type = "text";
@@ -105,7 +105,7 @@ export class TextDatasource extends EventEmitter {
      * Get the datasource configuration
      * @memberof TextDatasource
      */
-    getConfiguration(): DatasourceConfiguration {
+    getConfiguration(): DatasourceConfigurationText {
         return {
             type: "text",
             content: this._content

@@ -135,8 +135,9 @@ export default class GoogleDriveDatasource extends TextDatasource {
         if (refreshToken) this.refreshToken = refreshToken;
         this.client = new GoogleDriveClient(accessToken);
         const { data: credentialData } = getCredentials(this.credentials.id);
-        credentialData.datasource.token = accessToken;
-        if (refreshToken) credentialData.datasource.refreshToken = refreshToken;
+        const datasource = credentialData.datasource as DatasourceConfigurationGoogleDrive;
+        datasource.token = accessToken;
+        if (refreshToken) datasource.refreshToken = refreshToken;
         this.emit("updated");
     }
 }

@@ -21,42 +21,50 @@ export interface CredentialsPayload {
     open: boolean;
 }
 
-export interface DatasourceConfiguration {
+export interface DatasourceConfigurationText {
     type: string;
     content?: string;
-    [key: string]: any;
 }
 
-export interface DatasourceConfigurationDropbox extends DatasourceConfiguration {
+export interface DatasourceConfigurationDropbox extends DatasourceConfigurationText {
     type: "dropbox";
     path: string;
     token: string;
 }
 
-export interface DatasourceConfigurationGoogleDrive extends DatasourceConfiguration {
+export interface DatasourceConfigurationGoogleDrive extends DatasourceConfigurationText {
     type: "googledrive";
     fileID: string;
     refreshToken: string;
     token: string;
 }
 
-export interface DatasourceConfigurationFile extends DatasourceConfiguration {
+export interface DatasourceConfigurationFile extends DatasourceConfigurationText {
     type: "file";
     path: string;
+    token?: string;
 }
 
-export interface DatasourceConfigurationMemory extends DatasourceConfiguration {
+export interface DatasourceConfigurationMemory extends DatasourceConfigurationText {
     type: "memory";
     property: string;
 }
 
-export interface DatasourceConfigurationWebDAV extends DatasourceConfiguration {
+export interface DatasourceConfigurationWebDAV extends DatasourceConfigurationText {
     type: "webdav";
     endpoint: string;
     password: string;
     path: string;
     username: string;
 }
+
+export type DatasourceConfiguration =
+    | DatasourceConfigurationDropbox
+    | DatasourceConfigurationGoogleDrive
+    | DatasourceConfigurationFile
+    | DatasourceConfigurationMemory
+    | DatasourceConfigurationText
+    | DatasourceConfigurationWebDAV;
 
 export interface DatasourceLoadedData {
     Format: any;
