@@ -24,6 +24,7 @@ export interface CredentialsPayload {
 export interface DatasourceConfigurationText {
     type: string;
     content?: string;
+    property?: string
 }
 
 export interface DatasourceConfigurationDropbox extends DatasourceConfigurationText {

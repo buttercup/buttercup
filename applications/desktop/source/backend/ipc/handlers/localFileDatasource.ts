@@ -30,7 +30,6 @@ export function registerLocalFileDatasourceHandlers(ipc: IPC) {
             masterPassword: password,
             name
         });
-
     });
 
     registerHandler(ipc, "local_file_browse_existing", async function() {

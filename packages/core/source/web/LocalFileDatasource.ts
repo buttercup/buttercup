@@ -5,7 +5,6 @@ import { buildClient } from "./localFileClient.js";
 import { Credentials } from "../credentials/Credentials.js";
 import {
     CredentialsPayload,
-    DatasourceConfiguration,
     DatasourceConfigurationFile,
     DatasourceLoadedData,
     EncryptedContent,

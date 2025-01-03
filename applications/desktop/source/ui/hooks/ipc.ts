@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IPCInterface } from "../../shared/types.js";
 import { executeIPCHandler } from "../ipc/handler.js";
 
@@ -11,9 +11,6 @@ interface IPCCallHookResult<Name extends keyof IPCInterface> {
 };
 type Status = "idle" | "running";
 
-// export function useIPCCall<Name extends keyof IPCInterface>(name: Name): IPCCallHookResult<Name>;
-// export function useIPCCall<Name extends keyof IPCInterface>(name: Name, callback: IPCCallback<Name>): IPCCallHookResult<Name>;
-// export function useIPCCall<Name extends keyof IPCInterface>(name: Name, callback: IPCCallback<Name>): IPCCallHookResult<Name>;
 export function useIPCCall<Name extends keyof IPCInterface>(
     name: Name,
     callback: IPCCallback<Name> | null = null
@@ -60,21 +57,28 @@ export function useRepeatingIPCCall<Name extends keyof IPCInterface>(
     args: Parameters<IPCInterface[Name]>,
     delayMs: number
 ): IPCCallHookResult<Name> {
+    console.log("REPEATING CALL", name);
     const executeRef = useRef<IPCCallHookResult<Name>["execute"]>(() => {});
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const timerHandler = useCallback(() => {
+        console.log("TIMER HANDLER");
         if (timerRef.current !== null) {
             clearTimeout(timerRef.current);
         }
 
         timerRef.current = setTimeout(() => {
+            console.log("TIMER, call", executeRef.current);
             executeRef.current(...args);
         }, delayMs);
     }, [delayMs, args]);
 
     const output = useIPCCall(name, timerHandler);
     executeRef.current = output.execute;
+
+    useEffect(() => {
+        executeRef.current(...args);
+    }, []);
 
     return output;
 }

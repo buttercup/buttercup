@@ -5,10 +5,12 @@ import {
     FileTextOutlined,
     UnlockOutlined
 } from "@ant-design/icons";
-import { Button, Divider, Flex, Form, Input, Modal, Spin, Steps, Typography } from "antd";
+import { Button, Divider, Flex, Form, Input, Modal, Result, Spin, Steps, Typography } from "antd";
 import React, { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import { useIPCCall } from "../../../hooks/ipc.js";
 import { assert } from "../../../utilities/assert.js";
+import { useNotification } from "../../../hooks/notifications.js";
 import { AddStepProps } from "./types.js";
 
 interface LocalFileRouterProps {}
@@ -28,8 +30,8 @@ function getSteps(): Array<AddStepProps> {
             icon: <UnlockOutlined />
         },
         {
-            id: "done",
-            title: "Done",
+            id: "added",
+            title: "Vault Added",
             status: "wait",
             icon: <CheckOutlined />
         }
@@ -37,7 +39,9 @@ function getSteps(): Array<AddStepProps> {
 }
 
 export function LocalFileRouter(props: LocalFileRouterProps) {
-    // const { onStatusChange, page } = props;
+    const navigate = useNavigate();
+    const notification = useNotification();
+
     const [steps, setSteps] = useState<Array<AddStepProps>>(getSteps);
 
     const currentPage = useMemo(() => {
@@ -55,6 +59,7 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
         return steps[0]?.id;
     }, [steps]);
 
+    const [filePath, setFilePath] = useState<string | null>(null);
     const handleExistingFileChosen = useCallback(
         (error: string | null, result: { filePath: string | null } | null) => {
             setSteps((currentSteps) => {
@@ -65,16 +70,21 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
                 );
                 assert(chooseStep, "No step found for choose-file state");
 
-                if (error) {
+                if (error || !result) {
                     chooseStep.status = "error";
+                    notification.error({
+                        message: "Failed choosing vault file",
+                        description: error
+                    });
                 } else {
                     chooseStep.status = "finish";
+                    setFilePath(result.filePath);
                 }
 
                 return outSteps;
             });
         },
-        []
+        [notification]
     );
     const { execute: executeChooseExisting } = useIPCCall(
         "local_file_browse_existing",
@@ -84,17 +94,44 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [unlocking, setUnlocking] = useState<boolean>(false);
-    const handleUnlock = useCallback((password: string) => {
-        if (password.length <= 0) return;
-        setUnlocking(true);
+
+    const handleVaultAdded = useCallback((error: string | null) => {
+        setSteps((currentSteps) => {
+            setUnlocking(false);
+
+            const outSteps = [...currentSteps];
+            const unlockStep = outSteps.find(
+                (item) => item.id === "unlock"
+            );
+            assert(unlockStep, "No step found for unlock state");
+
+            if (error !== null) {
+                unlockStep.status = "error";
+                notification.error({
+                    message: "Failed unlocking vault",
+                    description: error
+                });
+            } else {
+                unlockStep.status = "finish";
+            }
+
+            return outSteps;
+        });
     }, []);
+    const { execute: executeAddVault } = useIPCCall("local_file_add_existing", handleVaultAdded);
+    const handleUnlock = useCallback(() => {
+        if (password.length <= 0 || !filePath) return;
+        setUnlocking(true);
+
+        executeAddVault(name, filePath, password);
+    }, [executeAddVault, filePath, name, password]);
 
     return (
         <>
             <Steps items={steps} />
             <Flex
                 gap="middle"
-                justify="space-between"
+                justify={currentPage === "added" ? "center" : "space-between"}
                 align="stretch"
                 style={{ marginTop: "22px", flex: "1 1 auto" }}
             >
@@ -202,13 +239,30 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
                                     <Input type="password" value={password} onChange={evt => setPassword(evt.target.value)} />
                                 </Form.Item>
                                 <Form.Item>
-                                    <Button type="primary" htmlType="submit" onClick={() => handleUnlock(password)} disabled={password.length <= 0}>
+                                    <Button
+                                        type="primary"
+                                        htmlType="submit"
+                                        onClick={() => handleUnlock()}
+                                        disabled={password.length <= 0 || name.length <= 0}
+                                    >
                                         Unlock
                                     </Button>
                                 </Form.Item>
                             </Form>
                         </div>
                     </>
+                )}
+                {currentPage === "added" && (
+                    <Result
+                        status="success"
+                        title="Successfully added new local vault"
+                        subTitle={`The local vault '${name}' was added and unlocked.`}
+                        extra={[
+                            <Button type="primary" onClick={() => navigate("/")}>
+                                Done
+                            </Button>
+                        ]}
+                    />
                 )}
             </Flex>
             <Modal

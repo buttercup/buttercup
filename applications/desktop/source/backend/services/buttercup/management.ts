@@ -12,11 +12,21 @@ export function getVaultDescriptions(): Array<VaultSourceDescription> {
 
 export function getVaultManager(): VaultManager {
     if (!__vaultManager) {
-        init();
-        __vaultManager = new VaultManager({
-            cacheStorage: getVaultCacheStorage(),
-            sourceStorage: getVaultStorage()
-        });
+        throw new Error("Vault manager not initialised");
     }
     return __vaultManager;
+}
+
+export async function initialise() {
+    init();
+
+    if (__vaultManager) {
+        throw new Error("Vault manager already initialised");
+    }
+
+    __vaultManager = new VaultManager({
+        cacheStorage: getVaultCacheStorage(),
+        sourceStorage: getVaultStorage()
+    });
+    await __vaultManager.rehydrate();
 }

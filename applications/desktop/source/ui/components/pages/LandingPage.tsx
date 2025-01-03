@@ -68,6 +68,7 @@ export function LandingPage() {
                     <List
                         style={{ width: "100%" }}
                         dataSource={vaults.map(vault => ({
+                            id: vault.id,
                             title: vault.name,
                             icon: <VaultIcon size={64} vaultID={vault.id} />
                         }))}
@@ -78,7 +79,7 @@ export function LandingPage() {
                                     style={{ width: "100%" }}
                                     size="small"
                                     actions={
-                                        hoveredItem === item.title
+                                        hoveredItem === item.id
                                             ? [
                                                   <EditOutlined
                                                       key="edit"
@@ -92,7 +93,7 @@ export function LandingPage() {
                                             : []
                                     }
                                     onMouseEnter={() =>
-                                        setHoveredItem(item.title)
+                                        setHoveredItem(item.id)
                                     }
                                     onMouseLeave={() => setHoveredItem(null)}
                                 >

@@ -2,7 +2,7 @@ import { registerHandler } from "../interface.js";
 import { IPC } from "../types.js";
 import { getVaultDescriptions } from "../../services/buttercup/management.js";
 
-export function registerLocalFileDatasourceHandlers(ipc: IPC) {
+export function registerVaultSourceHandlers(ipc: IPC) {
     registerHandler(ipc, "get_vaults_list", async function() {
         return getVaultDescriptions();
     });

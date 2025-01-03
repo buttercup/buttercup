@@ -4,6 +4,7 @@ import { VaultSourceID } from "@buttercup/core";
 import { FileStorage } from "./FileStorage.js";
 import { Environment } from "../../library/environment.js";
 import { ensureEnvironmentDirectories } from "./environment.js";
+import { logInfo } from "../../library/log.js";
 
 export interface EnvPaths {
     data: string;
@@ -80,6 +81,8 @@ export function getVaultSettingsStorage(sourceID: VaultSourceID): FileStorage {
 export function getVaultStorage(): FileStorage {
     if (!__vaultStorage) {
         const vaultsPath = getVaultStoragePath();
+        logInfo(`Preparing vault storage: ${vaultsPath}`);
+
         __vaultStorage = new FileStorage(vaultsPath);
     }
     return __vaultStorage;

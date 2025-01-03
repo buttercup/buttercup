@@ -8,7 +8,6 @@ export interface AddVaultPayload {
     datasourceConfig: DatasourceConfiguration;
     masterPassword: string;
     name: string;
-    // fileNameOverride?: string;
 }
 
 async function addVault(
@@ -23,8 +22,13 @@ async function addVault(
     const source = new VaultSource(name, type, credsSecure);
     await vaultManager.interruptAutoUpdate(async () => {
         await vaultManager.addSource(source);
-        await source.unlock(passCredentials, { initialiseRemote: createNew });
-        await vaultManager.dehydrateSource(source);
+        try {
+            await source.unlock(passCredentials, { initialiseRemote: createNew });
+            await vaultManager.dehydrateSource(source);
+        } catch (err) {
+            await vaultManager.removeSource(source.id);
+            throw err;
+        }
     });
     return source.id;
 }
@@ -53,7 +57,7 @@ export async function addVaultFromPayload(payload: AddVaultPayload): Promise<Vau
             throw new Error(`Unsupported vault type: ${payload.datasourceConfig.type}`);
     }
     logInfo(
-        `Adding vault "${name}" (${payload.datasourceConfig.type}) (new = ${
+        `Adding vault "${payload.name}" (${payload.datasourceConfig.type}) (new = ${
             payload.createNew ? "yes" : "no"
         })`
     );
@@ -64,6 +68,6 @@ export async function addVaultFromPayload(payload: AddVaultPayload): Promise<Vau
         payload.datasourceConfig.type,
         payload.createNew
     );
-    logInfo(`Added vault "${name}" (${sourceID})`);
+    logInfo(`Added vault "${payload.name}" (${sourceID})`);
     return sourceID;
 }

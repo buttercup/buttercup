@@ -5,7 +5,7 @@ import { getCredentials } from "../credentials/memory/credentials.js";
 import LocalStorageInterface from "./LocalStorageInterface.js";
 import {
     CredentialsPayload,
-    DatasourceConfiguration,
+    DatasourceConfigurationText,
     DatasourceLoadedData,
     EncryptedContent,
     History
@@ -31,8 +31,8 @@ export default class LocalStorageDatasource extends TextDatasource {
         super(credentials);
         const { data: credentialData } = getCredentials(credentials.id) as CredentialsPayload;
         const { datasource: datasourceConfig } = credentialData;
-        const { property } = datasourceConfig as DatasourceConfiguration;
-        this._property = property;
+        const { property } = datasourceConfig as DatasourceConfigurationText;
+        this._property = property!;
         this._storage = new LocalStorageInterface();
         this.type = TYPE;
         fireInstantiationHandlers(TYPE, this);
