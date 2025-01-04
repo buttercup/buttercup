@@ -4,12 +4,15 @@ import {
     DeleteOutlined,
     DropboxOutlined,
     EditOutlined,
-    GoogleOutlined
+    GoogleOutlined,
+    UnlockOutlined
 } from "@ant-design/icons";
-import { Card, Divider, Layout, List, Typography } from "antd";
-import React, { useMemo, useState } from "react";
+import { Badge, Card, Divider, Layout, List, Typography } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { styled } from "styled-components";
+import { VaultSourceStatus } from "@buttercup/core";
+import { useDeepCompareMemo } from "use-deep-compare";
 import { VaultIcon } from "../icons/VaultIcon.jsx";
 import { SourceType } from "../../../shared/types.js";
 import { useRepeatingIPCCall } from "../../hooks/ipc.js";
@@ -17,6 +20,12 @@ import { useRepeatingIPCCall } from "../../hooks/ipc.js";
 const SourceCard = styled(Card)`
     .ant-card-body {
         padding: 16px;
+    }
+`;
+
+const SourceItem = styled(List.Item)`
+    .ant-ribbon-wrapper {
+        width: 100%;
     }
 `;
 
@@ -53,7 +62,10 @@ export function LandingPage() {
     const vaultTypes = useMemo(getVaultTypes, []);
 
     const { result: vaultsResult } = useRepeatingIPCCall("get_vaults_list", [], 5000);
-    const vaults = useMemo(() => Array.isArray(vaultsResult) ? vaultsResult : [], [vaultsResult]);
+    const vaults = useDeepCompareMemo(() => Array.isArray(vaultsResult) ? vaultsResult : [], [vaultsResult]);
+    useEffect(() => {
+        console.log("VAULTS CHANGED", vaults);
+    },[vaults]);
 
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
@@ -70,40 +82,52 @@ export function LandingPage() {
                         dataSource={vaults.map(vault => ({
                             id: vault.id,
                             title: vault.name,
-                            icon: <VaultIcon size={64} vaultID={vault.id} />
+                            icon: <VaultIcon size={64} vaultID={vault.id} />,
+                            unlocked: vault.state === VaultSourceStatus.Unlocked
                         }))}
                         renderItem={(item) => (
-                            <List.Item>
-                                <Card
-                                    hoverable
-                                    style={{ width: "100%" }}
-                                    size="small"
-                                    actions={
-                                        hoveredItem === item.id
-                                            ? [
-                                                  <EditOutlined
-                                                      key="edit"
-                                                      className="card-actions"
-                                                  />,
-                                                  <DeleteOutlined
-                                                      key="delete"
-                                                      className="card-actions"
-                                                  />
-                                              ]
-                                            : []
-                                    }
-                                    onMouseEnter={() =>
-                                        setHoveredItem(item.id)
-                                    }
-                                    onMouseLeave={() => setHoveredItem(null)}
+                            <SourceItem>
+                                <Badge.Ribbon
+                                    color={item.unlocked ? "green" : "#bbb"}
+                                    text={<UnlockOutlined />}
                                 >
-                                    <Card.Meta
-                                        avatar={item.icon}
-                                        title={item.title}
-                                        description="WebDAV-enabled remote vault"
-                                    />
-                                </Card>
-                            </List.Item>
+                                    <Card
+                                        hoverable
+                                        style={{ width: "100%" }}
+                                        size="small"
+                                        actions={
+                                            hoveredItem === item.id
+                                                ? [
+                                                    <EditOutlined
+                                                        key="edit"
+                                                        className="card-actions"
+                                                    />,
+                                                    <DeleteOutlined
+                                                        key="delete"
+                                                        className="card-actions"
+                                                    />
+                                                ]
+                                                : []
+                                        }
+                                        onMouseEnter={() =>
+                                            setHoveredItem(item.id)
+                                        }
+                                        onMouseLeave={() => setHoveredItem(null)}
+                                    >
+                                        <Card.Meta
+                                            avatar={item.icon}
+                                            title={(
+                                                <>
+                                                    <span>{item.title}</span>
+                                                    {/* &nbsp;
+                                                    <Badge status={item.unlocked ? "success" : "default"} /> */}
+                                                </>
+                                            )}
+                                            description="WebDAV-enabled remote vault"
+                                        />
+                                    </Card>
+                                </Badge.Ribbon>
+                            </SourceItem>
                         )}
                     />
                 </div>

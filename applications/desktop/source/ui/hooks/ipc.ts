@@ -57,24 +57,31 @@ export function useRepeatingIPCCall<Name extends keyof IPCInterface>(
     args: Parameters<IPCInterface[Name]>,
     delayMs: number
 ): IPCCallHookResult<Name> {
-    console.log("REPEATING CALL", name);
     const executeRef = useRef<IPCCallHookResult<Name>["execute"]>(() => {});
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [result, setResult] = useState<ReturnType<IPCInterface[Name]> | null>(null);
 
-    const timerHandler = useCallback(() => {
-        console.log("TIMER HANDLER");
+    const timerHandler = useCallback((error: string | null, value: ReturnType<IPCInterface[Name]> | null) => {
         if (timerRef.current !== null) {
             clearTimeout(timerRef.current);
         }
 
+        if (error === null) {
+            setResult(value);
+        }
+
         timerRef.current = setTimeout(() => {
-            console.log("TIMER, call", executeRef.current);
             executeRef.current(...args);
         }, delayMs);
     }, [delayMs, args]);
 
-    const output = useIPCCall(name, timerHandler);
-    executeRef.current = output.execute;
+    const ipcCallOutput = useIPCCall(name, timerHandler);
+    executeRef.current = ipcCallOutput.execute;
+
+    const output = useMemo(() => ({
+        ...ipcCallOutput,
+        result
+    }), [ipcCallOutput, result]);
 
     useEffect(() => {
         executeRef.current(...args);
