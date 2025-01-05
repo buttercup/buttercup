@@ -5,13 +5,14 @@ import {
     FileTextOutlined,
     UnlockOutlined
 } from "@ant-design/icons";
-import { Button, Divider, Flex, Form, Input, Modal, Result, Spin, Steps, Typography } from "antd";
+import { Button, Divider, Flex, Form, Input, Result, Steps, Typography } from "antd";
 import React, { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useIPCCall } from "../../../hooks/ipc.js";
 import { assert } from "../../../utilities/assert.js";
 import { useNotification } from "../../../hooks/notifications.js";
 import { AddStepProps } from "./types.js";
+import { LoadingModal } from "../../modals/LoadingModal.jsx";
 
 interface LocalFileRouterProps {}
 
@@ -265,22 +266,10 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
                     />
                 )}
             </Flex>
-            <Modal
-                closable={false}
+            <LoadingModal
                 open={unlocking}
-                footer={<></>}
-            >
-                <Flex
-                    gap="middle"
-                    vertical
-                    justify="space-between"
-                    align="center"
-                    style={{ marginTop: 16 }}
-                >
-                    <Spin size="large" />
-                    <Typography.Title level={3}>Unlocking Vault</Typography.Title>
-                </Flex>
-            </Modal>
+                text="Unlocking Vault"
+            />
         </>
     );
 }
