@@ -1,6 +1,8 @@
 import {
     SearchResult as CoreSearchResult,
     EntryFacade,
+    EntryID,
+    EntryType,
     VaultFormatID,
     VaultSourceID,
     VaultSourceStatus
@@ -105,6 +107,14 @@ export interface UpdateProgressInfo {
     percent: number;
     total: number;
     transferred: number;
+}
+
+export interface VaultEditInterface {
+    getAllEntryDetails: () => Promise<Array<{
+        id: EntryID;
+        title: string;
+        type: EntryType;
+    }>>;
 }
 
 export interface VaultSettingsLocal {
