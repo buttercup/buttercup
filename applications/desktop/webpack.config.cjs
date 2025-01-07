@@ -2,12 +2,11 @@ const path = require("node:path");
 const webpack = require("webpack");
 const PugPlugin = require("pug-plugin");
 
-const { DefinePlugin } = webpack;
 const DIRNAME = __dirname;
 
 module.exports = [
     {
-        // devtool: false,
+        devtool: false,
 
         entry: {
             index: path.join(DIRNAME, "./source/ui/index.pug")
@@ -66,19 +65,6 @@ module.exports = [
                 },
                 css: {
                     filename: "css/[name].[contenthash:8].css"
-                }
-            }),
-            new DefinePlugin({
-                process: {
-                    env: {
-                        DEV:
-                            process.env.NODE_ENV === "development"
-                                ? "true"
-                                : "false",
-                        NODE_ENV: JSON.stringify(
-                            process.env.NODE_ENV ?? "production"
-                        )
-                    }
                 }
             })
         ],

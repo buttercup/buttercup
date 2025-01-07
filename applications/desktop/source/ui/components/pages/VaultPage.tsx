@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Avatar, Breadcrumb, Card, Flex, Layout, List, Menu, Tabs, theme, Tree } from "antd";
+import { Avatar, Breadcrumb, Card, Flex, Layout, List, Menu, Tabs, Tag, theme, Tree } from "antd";
 import {
     AppstoreOutlined,
     CarryOutOutlined,
@@ -25,6 +25,12 @@ interface Item {
     label: string;
 }
 
+enum SidebarType {
+    MainMenu = "menu",
+    GroupTree = "groups",
+    TagCloud = "tags"
+}
+
 const TabbedSider = styled(Layout.Sider)`
     .ant-layout-sider-children {
         display: flex;
@@ -35,6 +41,7 @@ const TabbedSider = styled(Layout.Sider)`
 
 export function VaultPage() {
     const [collapsed, setCollapsed] = useState(false);
+    const [sidebarType, setSidebarType] = useState<SidebarType>(SidebarType.MainMenu);
 
     const treeData = useMemo(() => [
         {
@@ -199,9 +206,22 @@ export function VaultPage() {
         };
     });
 
+    const tags = useMemo(() => [
+        "social",
+        "work",
+        "finance",
+        "email",
+        "family",
+        "torrents",
+        "homelab",
+        "shopping",
+        "government"
+    ], []);
+    const [selectedTags, setSelectedTags] = useState<Array<string>>([]);
+
     const {
         token: { colorBgContainer, borderRadiusLG, colorBorder },
-      } = theme.useToken();
+    } = theme.useToken();
 
     return (
         <Layout
@@ -219,16 +239,54 @@ export function VaultPage() {
                 }}
             >
                 <div style={{ flex: "1 1 auto" }}>
-                    <Menu
-                        mode="inline"
-                        defaultSelectedKeys={['1']}
-                        defaultOpenKeys={['sub1']}
-                        style={{
-                            height: '100%',
-                            borderRight: 0
-                        }}
-                        items={items2}
-                    />
+                    {sidebarType === SidebarType.MainMenu && (
+                        <Menu
+                            mode="inline"
+                            defaultSelectedKeys={['1']}
+                            defaultOpenKeys={['sub1']}
+                            style={{
+                                height: '100%',
+                                borderRight: 0
+                            }}
+                            items={items2}
+                        />
+                    )}
+                    {sidebarType === SidebarType.GroupTree && (
+                        <Tree
+                            showLine
+                            showIcon
+                            defaultExpandedKeys={['0-0-0']}
+                            onSelect={() => {}}
+                            treeData={treeData}
+                        />
+                    )}
+                    {sidebarType === SidebarType.TagCloud && (
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                flexWrap: "wrap"
+                            }}
+                        >
+                            {...tags.map(tag => (
+                                <Tag.CheckableTag
+                                    checked={selectedTags.includes(tag)}
+                                    onChange={
+                                        checked => checked
+                                            ? setSelectedTags([...new Set([
+                                                ...selectedTags,
+                                                tag
+                                            ])])
+                                            : setSelectedTags(selectedTags => selectedTags.filter(selected => selected !== tag))
+                                    }
+                                >
+                                    {tag}
+                                </Tag.CheckableTag>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <Tabs
                     tabPosition="bottom"
@@ -237,30 +295,24 @@ export function VaultPage() {
                         {
                             label: null,
                             icon: <AppstoreOutlined />,
-                            key: "menu",
+                            key: SidebarType.MainMenu,
                             children: <></>
                         },
                         {
                             label: null,
                             icon: <GroupOutlined />,
-                            key: "groups",
+                            key: SidebarType.GroupTree,
                             children: <></>
                         },
                         {
                             label: null,
                             icon: <TagsOutlined />,
-                            key: "tags",
+                            key: SidebarType.TagCloud,
                             children: <></>
                         }
                     ]}
-                    // items={new Array(3).fill(null).map((_, i) => {
-                    //     const id = String(i + 1);
-                    //     return {
-                    //         label: `Tab ${id}`,
-                    //         key: id,
-                    //         children: `Content of Tab ${id}`,
-                    //     };
-                    // })}
+                    activeKey={sidebarType}
+                    onTabClick={(tabKey: string) => setSidebarType(tabKey as SidebarType)}
                 />
             </TabbedSider>
             <Layout
