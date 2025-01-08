@@ -1,22 +1,21 @@
 import React, { useMemo, useState } from "react";
-import { Avatar, Breadcrumb, Card, Flex, Layout, List, Menu, Tabs, Tag, theme, Tree } from "antd";
+import { Avatar, Col, Descriptions, Divider, Flex, Layout, List, Menu, Progress, Row, Statistic, Tabs, Tag, theme, Tree, Typography } from "antd";
 import {
     AppstoreOutlined,
     CarryOutOutlined,
-    DesktopOutlined,
-    FileOutlined,
+    ClockCircleOutlined,
+    DeleteOutlined,
     FormOutlined,
     GroupOutlined,
     LaptopOutlined,
-    MenuOutlined,
     NotificationOutlined,
-    NumberOutlined,
-    PieChartOutlined,
+    ProfileOutlined,
+    StarOutlined,
     TagsOutlined,
-    TeamOutlined,
     UserOutlined
 } from "@ant-design/icons";
 import { styled } from "styled-components";
+import { getUIEntryTypes } from "../../library/entryTypes.jsx";
 
 interface Item {
     key: string;
@@ -31,6 +30,18 @@ enum SidebarType {
     TagCloud = "tags"
 }
 
+const SidebarTabs = styled(Tabs)`
+    .ant-tabs-nav {
+        margin-top: 0;
+    }
+`;
+
+const StatisticSmallSuffix = styled(Statistic)`
+    .ant-statistic-content-suffix {
+        font-size: 16px;
+    }
+`;
+
 const TabbedSider = styled(Layout.Sider)`
     .ant-layout-sider-children {
         display: flex;
@@ -38,6 +49,45 @@ const TabbedSider = styled(Layout.Sider)`
         justify-content: space-between;
     }
 `;
+
+function getSidebarMenu() {
+    const entryTypes = getUIEntryTypes();
+    return {
+        default: "all-entries",
+        items: [
+            {
+                key: "all-entries",
+                icon: <AppstoreOutlined />,
+                label: "All Entries"
+            },
+            {
+                key: "favourites",
+                icon: <StarOutlined />,
+                label: "Favourites"
+            },
+            {
+                key: "recents",
+                icon: <ClockCircleOutlined />,
+                label: "Recents"
+            },
+            {
+                key: "entry-types",
+                icon: <ProfileOutlined />,
+                label: "Entry Types",
+                children: entryTypes.map(item => ({
+                    key: `entry-type:${item.entryType}`,
+                    icon: item.icon,
+                    label: item.title
+                }))
+            },
+            {
+                key: "trash",
+                icon: <DeleteOutlined />,
+                label: "Trash"
+            }
+        ]
+    };
+}
 
 export function VaultPage() {
     const [collapsed, setCollapsed] = useState(false);
@@ -186,25 +236,7 @@ export function VaultPage() {
         }
     ]);
 
-    // const items1 = ['1', '2', '3'].map((key) => ({
-    //     key,
-    //     label: `nav ${key}`,
-    // }));
-    const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
-        const key = String(index + 1);
-        return {
-            key: `sub${key}`,
-            icon: React.createElement(icon),
-            label: `subnav ${key}`,
-            children: new Array(4).fill(null).map((_, j) => {
-                const subKey = index * 4 + j + 1;
-                return {
-                    key: subKey,
-                    label: `option${subKey}`,
-                };
-            }),
-        };
-    });
+    const sidebarMenu = useMemo(getSidebarMenu, []);
 
     const tags = useMemo(() => [
         "social",
@@ -238,17 +270,16 @@ export function VaultPage() {
                     borderRightColor: colorBorder
                 }}
             >
-                <div style={{ flex: "1 1 auto" }}>
+                <div style={{ flex: "1 1 auto", overflowY: "scroll" }}>
                     {sidebarType === SidebarType.MainMenu && (
                         <Menu
                             mode="inline"
-                            defaultSelectedKeys={['1']}
-                            defaultOpenKeys={['sub1']}
+                            defaultSelectedKeys={[sidebarMenu.default]}
                             style={{
                                 height: '100%',
                                 borderRight: 0
                             }}
-                            items={items2}
+                            items={sidebarMenu.items}
                         />
                     )}
                     {sidebarType === SidebarType.GroupTree && (
@@ -288,7 +319,7 @@ export function VaultPage() {
                         </div>
                     )}
                 </div>
-                <Tabs
+                <SidebarTabs
                     tabPosition="bottom"
                     centered
                     items={[
@@ -360,7 +391,57 @@ export function VaultPage() {
                         borderRadius: borderRadiusLG,
                     }}
                 >
-                    Content
+                    <Typography.Title level={2} style={{ marginTop: 0 }}>Deezer</Typography.Title>
+                    <Row gutter={16}>
+                        <Col span={6}>
+                            <Statistic title="Logins" value={5} />
+                        </Col>
+                        <Col span={6}>
+                            <Statistic title="Page Opened" value={8} />
+                        </Col>
+                        <Col span={6}>
+                            <StatisticSmallSuffix title="Password Updated" suffix="days ago" value={8} />
+                        </Col>
+                        <Col span={6}>
+                        <StatisticSmallSuffix title="Created" suffix="months ago" value={5} />
+                        </Col>
+                    </Row>
+                    <Divider />
+                    <Descriptions
+                        title="Login"
+                        bordered
+                        column={2}
+                        size="small"
+                        items={[
+                            { key: "username", label: "Username", children: "user@email.com" },
+                            { key: "password", label: "Password", children: "❋❋❋❋❋❋❋❋❋❋❋❋" },
+                            { key: "url", label: "URL", children: <Typography.Link>www.some-website.com</Typography.Link> },
+                            {
+                                key: "otp",
+                                label: "OTP",
+                                children: (
+                                    <Flex gap="middle" justify="flex-start" align="center">
+                                        <Progress
+                                            type="circle"
+                                            trailColor="#e6f4ff"
+                                            percent={60}
+                                            strokeWidth={20}
+                                            size={22}
+                                            format={() => ""}
+                                        />
+                                        <Typography.Title style={{ margin: 0 }} level={3}>293 102</Typography.Title>
+                                    </Flex>
+                                )
+                            },
+                            { key: "backup", label: "Backup Codes", children: "ASDNO394884\nDS3NO394884\nASDNO394884\nXSDNO364884" },
+                        ]}
+                    />
+                    {/* <Divider />
+                    <div>
+                        <Card style={{ width: "58px", padding: "0px" }}>
+                            <FileZipOutlined/>
+                        </Card>
+                    </div> */}
                 </Layout.Content>
             </Layout>
         </Layout>
