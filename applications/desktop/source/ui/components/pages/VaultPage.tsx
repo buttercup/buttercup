@@ -7,15 +7,16 @@ import {
     DeleteOutlined,
     FormOutlined,
     GroupOutlined,
-    LaptopOutlined,
-    NotificationOutlined,
     ProfileOutlined,
     StarOutlined,
-    TagsOutlined,
-    UserOutlined
+    TagsOutlined
 } from "@ant-design/icons";
+import { VaultSourceID } from "@buttercup/core";
+import { useParams } from "react-router";
 import { styled } from "styled-components";
 import { getUIEntryTypes } from "../../library/entryTypes.jsx";
+import { useVaultEditInterface } from "../../hooks/vaultEdit.js";
+import { useAsync } from "../../hooks/async.js";
 
 interface Item {
     key: string;
@@ -29,6 +30,10 @@ enum SidebarType {
     GroupTree = "groups",
     TagCloud = "tags"
 }
+
+type VaultPageParams = {
+    id: VaultSourceID;
+};
 
 const SidebarTabs = styled(Tabs)`
     .ant-tabs-nav {
@@ -90,8 +95,16 @@ function getSidebarMenu() {
 }
 
 export function VaultPage() {
-    const [collapsed, setCollapsed] = useState(false);
+    const { id: sourceID } = useParams<VaultPageParams>();
+    if (!sourceID) {
+        throw new Error("Vault source ID required for vault page");
+    }
+
     const [sidebarType, setSidebarType] = useState<SidebarType>(SidebarType.MainMenu);
+
+    const vaultEdit = useVaultEditInterface(sourceID);
+
+    const { result: allEntries, running: allEntriesRunning, runs: allEntriesRuns } = useAsync(vaultEdit.getAllEntryDetails, [sourceID]);
 
     const treeData = useMemo(() => [
         {
@@ -186,55 +199,18 @@ export function VaultPage() {
       []
     );
 
-    const [entries, setEntries] = useState<Array<{
-        description: string;
-        icon: string;
-        id: string;
-        title: string;
-    }>>([
-        {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            title: "Google",
-            description: "Main Google account for all Google services",
-            icon: "https://placedog.net/48"
-        },
-        {
-            id: "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
-            title: "GitHub",
-            description: "Developer account and repositories",
-            icon: "https://placedog.net/48"
-        },
-        {
-            id: "6ba7b811-9dad-11d1-80b4-00c04fd430c8",
-            title: "Amazon",
-            description: "Online shopping and Prime subscription",
-            icon: "https://placedog.net/48"
-        },
-        {
-            id: "6ba7b812-9dad-11d1-80b4-00c04fd430c8",
-            title: "Netflix",
-            description: "Streaming service subscription",
-            icon: "https://placedog.net/48"
-        },
-        {
-            id: "6ba7b813-9dad-11d1-80b4-00c04fd430c8",
-            title: "Spotify",
-            description: "Music streaming premium account",
-            icon: "https://placedog.net/48"
-        },
-        {
-            id: "6ba7b813-9dad-11d1-80b4-00c04fd430c9",
-            title: "Facebook",
-            description: "Social media site",
-            icon: "https://placedog.net/48"
-        },
-        {
-            id: "6ba7b813-9dad-11d1-80b4-00c04fd430c0",
-            title: "Deezer",
-            description: "Music streaming account",
-            icon: "https://placedog.net/48"
-        }
-    ]);
+    const entries = useMemo(
+        () => Array.isArray(allEntries)
+            ? allEntries.map(entry => ({
+                description: "Test",
+                icon: "https://placedog.net/48",
+                id: entry.id,
+                title: entry.title,
+                type: entry.type
+            }))
+            : [],
+        [allEntries]
+    );
 
     const sidebarMenu = useMemo(getSidebarMenu, []);
 

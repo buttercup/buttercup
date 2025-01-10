@@ -1,12 +1,11 @@
 import {
     SearchResult as CoreSearchResult,
     EntryFacade,
-    EntryID,
-    EntryType,
     VaultFormatID,
     VaultSourceID,
     VaultSourceStatus
 } from "@buttercup/core";
+import { VaultEditInterface } from "./vaultEdit/types.js";
 
 export interface AddVaultPayload {
     createNew: boolean;
@@ -50,6 +49,12 @@ export interface DatasourceConfig {
 }
 
 export interface IPCInterface {
+    emit_frontend_log: (level: LogLevel, message: string) => Promise<void>;
+    execute_vault_edit_action: <Method extends keyof VaultEditInterface>(
+        sourceID: VaultSourceID,
+        method: Method,
+        args: Parameters<VaultEditInterface[Method]>
+    ) => Promise<Awaited<ReturnType<VaultEditInterface[Method]>>>
     get_vaults_list: () => Array<VaultSourceDescription>;
     local_file_add_existing: (name: string, filePath: string, password: string) => void;
     local_file_browse_existing: () => { filePath: string | null; };
@@ -107,14 +112,6 @@ export interface UpdateProgressInfo {
     percent: number;
     total: number;
     transferred: number;
-}
-
-export interface VaultEditInterface {
-    getAllEntryDetails: () => Promise<Array<{
-        id: EntryID;
-        title: string;
-        type: EntryType;
-    }>>;
 }
 
 export interface VaultSettingsLocal {

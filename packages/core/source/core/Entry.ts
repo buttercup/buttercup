@@ -168,6 +168,8 @@ export class Entry extends VaultItem {
      * @returns The property value or an object with all
      *  values if no property specified
      */
+    getProperty(): PropertyKeyValueObject;
+    getProperty(property: string): string | undefined;
     getProperty(property?: string): PropertyKeyValueObject | string | undefined {
         const raw = this.vault.format.getEntryProperties(this._source);
         if (typeof property === "undefined") {
