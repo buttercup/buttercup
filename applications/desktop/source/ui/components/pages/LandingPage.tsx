@@ -43,7 +43,9 @@ function getVaultTypes() {
         {
             name: "Dropbox",
             type: SourceType.Dropbox,
-            icon: <DropboxOutlined style={{ fontSize: "48px", opacity: 0.4 }} />,
+            icon: (
+                <DropboxOutlined style={{ fontSize: "48px", opacity: 0.4 }} />
+            ),
             description: "Sync passwords securely across devices",
             enabled: false
         },
@@ -57,7 +59,11 @@ function getVaultTypes() {
         {
             name: "WebDAV",
             type: SourceType.WebDAV,
-            icon: <CloudUploadOutlined style={{ fontSize: "48px", opacity: 0.4 }} />,
+            icon: (
+                <CloudUploadOutlined
+                    style={{ fontSize: "48px", opacity: 0.4 }}
+                />
+            ),
             description: "Sync passwords securely across devices",
             enabled: false
         }
@@ -69,33 +75,43 @@ export function LandingPage() {
     const notification = useNotification();
     const vaultTypes = useMemo(getVaultTypes, []);
 
-    const { result: vaultsResult } = useRepeatingIPCCall("get_vaults_list", [], 5000);
-    const vaults = useDeepCompareMemo(() => Array.isArray(vaultsResult) ? vaultsResult : [], [vaultsResult]);
+    const { result: vaultsResult } = useRepeatingIPCCall(
+        "get_vaults_list",
+        [],
+        5000
+    );
+    const vaults = useDeepCompareMemo(
+        () => (Array.isArray(vaultsResult) ? vaultsResult : []),
+        [vaultsResult]
+    );
 
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-    const handleSourceClick = useCallback((id: VaultSourceID) => {
-        const item = vaults.find(vault => vault.id === id);
-        if (!item) {
-            notification.error({
-                message: "Invalid vault",
-                description: `No vault was found for ID: ${id}`
-            });
-            return;
-        }
-        if (item.state === VaultSourceStatus.Pending) {
-            notification.error({
-                message: "Invalid vault state",
-                description: "Vault in pending state"
-            });
-            return;
-        }
+    const handleSourceClick = useCallback(
+        (id: VaultSourceID) => {
+            const item = vaults.find((vault) => vault.id === id);
+            if (!item) {
+                notification.error({
+                    message: "Invalid vault",
+                    description: `No vault was found for ID: ${id}`
+                });
+                return;
+            }
+            if (item.state === VaultSourceStatus.Pending) {
+                notification.error({
+                    message: "Invalid vault state",
+                    description: "Vault in pending state"
+                });
+                return;
+            }
 
-        if (item.state === VaultSourceStatus.Locked) {
-            navigate(`/unlock-vault/${id}`);
-        } else {
-            navigate(`/vault/${id}`);
-        }
-    }, [navigate, notification, vaults]);
+            if (item.state === VaultSourceStatus.Locked) {
+                navigate(`/unlock-vault/${id}`);
+            } else {
+                navigate(`/vault/${id}`);
+            }
+        },
+        [navigate, notification, vaults]
+    );
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
@@ -106,7 +122,7 @@ export function LandingPage() {
                     </Typography.Title>
                     <List
                         style={{ width: "100%" }}
-                        dataSource={vaults.map(vault => ({
+                        dataSource={vaults.map((vault) => ({
                             id: vault.id,
                             title: vault.name,
                             icon: <VaultIcon size={64} vaultID={vault.id} />,
@@ -116,7 +132,13 @@ export function LandingPage() {
                             <SourceItem>
                                 <Badge.Ribbon
                                     color={item.unlocked ? "green" : "#bbb"}
-                                    text={item.unlocked ? <UnlockOutlined /> : <LockOutlined />}
+                                    text={
+                                        item.unlocked ? (
+                                            <UnlockOutlined />
+                                        ) : (
+                                            <LockOutlined />
+                                        )
+                                    }
                                 >
                                     <Card
                                         hoverable
@@ -125,22 +147,26 @@ export function LandingPage() {
                                         actions={
                                             hoveredItem === item.id
                                                 ? [
-                                                    <EditOutlined
-                                                        key="edit"
-                                                        className="card-actions"
-                                                    />,
-                                                    <DeleteOutlined
-                                                        key="delete"
-                                                        className="card-actions"
-                                                    />
-                                                ]
+                                                      <EditOutlined
+                                                          key="edit"
+                                                          className="card-actions"
+                                                      />,
+                                                      <DeleteOutlined
+                                                          key="delete"
+                                                          className="card-actions"
+                                                      />
+                                                  ]
                                                 : []
                                         }
-                                        onClick={() => handleSourceClick(item.id)}
+                                        onClick={() =>
+                                            handleSourceClick(item.id)
+                                        }
                                         onMouseEnter={() =>
                                             setHoveredItem(item.id)
                                         }
-                                        onMouseLeave={() => setHoveredItem(null)}
+                                        onMouseLeave={() =>
+                                            setHoveredItem(null)
+                                        }
                                     >
                                         <Card.Meta
                                             avatar={item.icon}
@@ -179,10 +205,16 @@ export function LandingPage() {
                                 }}
                             >
                                 {type.icon}
-                                <Typography.Title level={4} disabled={!type.enabled}>
+                                <Typography.Title
+                                    level={4}
+                                    disabled={!type.enabled}
+                                >
                                     {type.name}
                                 </Typography.Title>
-                                <Typography.Text type="secondary" disabled={!type.enabled}>
+                                <Typography.Text
+                                    type="secondary"
+                                    disabled={!type.enabled}
+                                >
                                     {type.description}
                                 </Typography.Text>
                             </SourceCard>

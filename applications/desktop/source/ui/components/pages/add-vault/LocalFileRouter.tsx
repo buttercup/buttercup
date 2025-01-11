@@ -5,7 +5,16 @@ import {
     FileTextOutlined,
     UnlockOutlined
 } from "@ant-design/icons";
-import { Button, Divider, Flex, Form, Input, Result, Steps, Typography } from "antd";
+import {
+    Button,
+    Divider,
+    Flex,
+    Form,
+    Input,
+    Result,
+    Steps,
+    Typography
+} from "antd";
 import React, { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useIPCCall } from "../../../hooks/ipc.js";
@@ -101,9 +110,7 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
             setUnlocking(false);
 
             const outSteps = [...currentSteps];
-            const unlockStep = outSteps.find(
-                (item) => item.id === "unlock"
-            );
+            const unlockStep = outSteps.find((item) => item.id === "unlock");
             assert(unlockStep, "No step found for unlock state");
 
             if (error !== null) {
@@ -119,7 +126,10 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
             return outSteps;
         });
     }, []);
-    const { execute: executeAddVault } = useIPCCall("local_file_add_existing", handleVaultAdded);
+    const { execute: executeAddVault } = useIPCCall(
+        "local_file_add_existing",
+        handleVaultAdded
+    );
     const handleUnlock = useCallback(() => {
         if (password.length <= 0 || !filePath) return;
         setUnlocking(true);
@@ -226,7 +236,13 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
                                         }
                                     ]}
                                 >
-                                    <Input type="text" value={name} onChange={evt => setName(evt.target.value)} />
+                                    <Input
+                                        type="text"
+                                        value={name}
+                                        onChange={(evt) =>
+                                            setName(evt.target.value)
+                                        }
+                                    />
                                 </Form.Item>
                                 <Form.Item
                                     label="Password"
@@ -237,14 +253,23 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
                                         }
                                     ]}
                                 >
-                                    <Input type="password" value={password} onChange={evt => setPassword(evt.target.value)} />
+                                    <Input
+                                        type="password"
+                                        value={password}
+                                        onChange={(evt) =>
+                                            setPassword(evt.target.value)
+                                        }
+                                    />
                                 </Form.Item>
                                 <Form.Item>
                                     <Button
                                         type="primary"
                                         htmlType="submit"
                                         onClick={() => handleUnlock()}
-                                        disabled={password.length <= 0 || name.length <= 0}
+                                        disabled={
+                                            password.length <= 0 ||
+                                            name.length <= 0
+                                        }
                                     >
                                         Unlock
                                     </Button>
@@ -259,17 +284,17 @@ export function LocalFileRouter(props: LocalFileRouterProps) {
                         title="Successfully added new local vault"
                         subTitle={`The local vault '${name}' was added and unlocked.`}
                         extra={[
-                            <Button type="primary" onClick={() => navigate("/")}>
+                            <Button
+                                type="primary"
+                                onClick={() => navigate("/")}
+                            >
                                 Done
                             </Button>
                         ]}
                     />
                 )}
             </Flex>
-            <LoadingModal
-                open={unlocking}
-                text="Unlocking Vault"
-            />
+            <LoadingModal open={unlocking} text="Unlocking Vault" />
         </>
     );
 }

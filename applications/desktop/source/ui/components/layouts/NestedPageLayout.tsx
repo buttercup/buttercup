@@ -35,8 +35,16 @@ export function NestedPageLayout(props: NestedPageLayoutProps) {
                         flex: "0 0 auto"
                     }}
                 >
-                    {props.breadcrumbs.map(breadcrumb => (
-                        <BreadcrumbItem href={breadcrumb.path ? `#${breadcrumb.path}` : undefined}>{breadcrumb.text}</BreadcrumbItem>
+                    {props.breadcrumbs.map((breadcrumb) => (
+                        <BreadcrumbItem
+                            href={
+                                breadcrumb.path
+                                    ? `#${breadcrumb.path}`
+                                    : undefined
+                            }
+                        >
+                            {breadcrumb.text}
+                        </BreadcrumbItem>
                     ))}
                 </Breadcrumb>
                 <div

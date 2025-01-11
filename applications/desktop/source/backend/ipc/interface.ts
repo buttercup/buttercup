@@ -5,9 +5,14 @@ import { logInfo } from "../library/log.js";
 
 type RegisteredHandler<Name extends keyof IPCInterface> = (
     this: IPCHandlerContext,
-    ...args: Parameters<IPCInterface[Name]>) => Promise<ReturnType<IPCInterface[Name]>>
+    ...args: Parameters<IPCInterface[Name]>
+) => Promise<ReturnType<IPCInterface[Name]>>;
 
-export function registerHandler<Name extends keyof IPCInterface>(ipc: IPC, name: Name, handler: RegisteredHandler<Name>): void {
+export function registerHandler<Name extends keyof IPCInterface>(
+    ipc: IPC,
+    name: Name,
+    handler: RegisteredHandler<Name>
+): void {
     ipc.handle(name, async (_, ...args: Parameters<IPCInterface[Name]>) => {
         logInfo(`Backend handler called: ${name}`);
 

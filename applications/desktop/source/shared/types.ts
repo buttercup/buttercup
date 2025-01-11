@@ -54,10 +54,14 @@ export interface IPCInterface {
         sourceID: VaultSourceID,
         method: Method,
         args: Parameters<VaultEditInterface[Method]>
-    ) => Promise<Awaited<ReturnType<VaultEditInterface[Method]>>>
+    ) => Promise<Awaited<ReturnType<VaultEditInterface[Method]>>>;
     get_vaults_list: () => Array<VaultSourceDescription>;
-    local_file_add_existing: (name: string, filePath: string, password: string) => void;
-    local_file_browse_existing: () => { filePath: string | null; };
+    local_file_add_existing: (
+        name: string,
+        filePath: string,
+        password: string
+    ) => void;
+    local_file_browse_existing: () => { filePath: string | null };
     lock_vault: (sourceID: VaultSourceID) => void;
     unlock_vault: (sourceID: VaultSourceID, password: string) => void;
 }

@@ -21,9 +21,7 @@ export function AddVaultPage() {
                 { path: null, text: "Add Vault" }
             ]}
         >
-            {type === SourceType.File && (
-                <LocalFileRouter />
-            )}
+            {type === SourceType.File && <LocalFileRouter />}
         </NestedPageLayout>
     );
 }

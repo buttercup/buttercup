@@ -1,6 +1,12 @@
 import React, { ReactNode } from "react";
 import { EntryType as CoreEntryType } from "@buttercup/core";
-import { CreditCardOutlined, EditOutlined, GlobalOutlined, KeyOutlined, LoginOutlined } from "@ant-design/icons";
+import {
+    CreditCardOutlined,
+    EditOutlined,
+    GlobalOutlined,
+    KeyOutlined,
+    LoginOutlined
+} from "@ant-design/icons";
 
 export interface UIEntryType {
     entryType: CoreEntryType;

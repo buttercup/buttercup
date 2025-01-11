@@ -7,7 +7,9 @@ let __vaultManager: VaultManager | null = null;
 
 export function getVaultDescriptions(): Array<VaultSourceDescription> {
     const sources = getVaultManager().sources;
-    return sources.map(source => describeSource(source)).sort((a, b) => a.order - b.order);
+    return sources
+        .map((source) => describeSource(source))
+        .sort((a, b) => a.order - b.order);
 }
 
 export function getVaultManager(): VaultManager {

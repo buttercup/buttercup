@@ -22,7 +22,8 @@ export function useVaultEditInterface(
 
     return useMemo(
         () => ({
-            getAllEntryDetails: async () => executeCall("getAllEntryDetails", [])
+            getAllEntryDetails: async () =>
+                executeCall("getAllEntryDetails", [])
         }),
         [executeCall]
     );

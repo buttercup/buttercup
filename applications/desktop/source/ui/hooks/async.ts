@@ -1,7 +1,10 @@
 import { DependencyList, useEffect, useMemo, useRef, useState } from "react";
 import { logErr } from "../library/log.js";
 
-export function useAsync<Output>(method: () => Promise<Output>, dependencies: DependencyList = []): {
+export function useAsync<Output>(
+    method: () => Promise<Output>,
+    dependencies: DependencyList = []
+): {
     error: Error | null;
     result: Output | null;
     running: boolean;
@@ -21,28 +24,31 @@ export function useAsync<Output>(method: () => Promise<Output>, dependencies: De
         setRunning(true);
         setError(null);
         method()
-            .then(newResult => {
+            .then((newResult) => {
                 runLock.current = false;
                 setRunning(false);
 
                 setResult(newResult);
-                setRuns(previous => previous + 1);
+                setRuns((previous) => previous + 1);
             })
-            .catch(err => {
+            .catch((err) => {
                 runLock.current = false;
                 setRunning(false);
 
                 logErr("Async hook method returned an error", err);
                 setError(err);
 
-                setRuns(previous => previous + 1);
+                setRuns((previous) => previous + 1);
             });
     }, [method, ...dependencies]);
 
-    return useMemo(() => ({
-        error,
-        result,
-        runs,
-        running
-    }), [error, result, runs, running]);
+    return useMemo(
+        () => ({
+            error,
+            result,
+            runs,
+            running
+        }),
+        [error, result, runs, running]
+    );
 }

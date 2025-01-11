@@ -12,8 +12,10 @@ export async function lockVaultSource(sourceID: VaultSourceID): Promise<void> {
     await source.lock();
 }
 
-
-export async function unlockVaultSource(sourceID: VaultSourceID, password: string): Promise<void> {
+export async function unlockVaultSource(
+    sourceID: VaultSourceID,
+    password: string
+): Promise<void> {
     const vaultMgr = getVaultManager();
 
     const source = vaultMgr.getSourceForID(sourceID);

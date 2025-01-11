@@ -8,7 +8,7 @@ import { useNotification } from "../../hooks/notifications.js";
 import { LoadingModal } from "../modals/LoadingModal.jsx";
 
 type UnlockVaultPageParams = {
-    id: VaultSourceID
+    id: VaultSourceID;
 };
 
 export function UnlockVaultPage() {
@@ -23,24 +23,30 @@ export function UnlockVaultPage() {
     const [password, setPassword] = useState<string>("");
     const [unlocking, setUnlocking] = useState<boolean>(false);
 
-    const handleVaultUnlocked = useCallback((error: string | null) => {
-        setUnlocking(false);
+    const handleVaultUnlocked = useCallback(
+        (error: string | null) => {
+            setUnlocking(false);
 
-        if (error) {
-            notification.error({
-                message: "Failed unlocking",
-                description: `Error unlocking vault ${id}: ${error}`
+            if (error) {
+                notification.error({
+                    message: "Failed unlocking",
+                    description: `Error unlocking vault ${id}: ${error}`
+                });
+                return;
+            }
+
+            notification.success({
+                message: "Vault unlocked",
+                description: "Successfully unlocked vault using password"
             });
-            return;
-        }
-
-        notification.success({
-            message: "Vault unlocked",
-            description: "Successfully unlocked vault using password"
-        });
-        navigate(`/vault/${id}`);
-    }, [id, navigate, notification]);
-    const { execute: executeUnlockVault } = useIPCCall("unlock_vault", handleVaultUnlocked);
+            navigate(`/vault/${id}`);
+        },
+        [id, navigate, notification]
+    );
+    const { execute: executeUnlockVault } = useIPCCall(
+        "unlock_vault",
+        handleVaultUnlocked
+    );
     const handleUnlock = useCallback(() => {
         if (password.length <= 0) return;
         setUnlocking(true);
@@ -62,17 +68,11 @@ export function UnlockVaultPage() {
                 align="center"
                 style={{ marginTop: "22px", flex: "1 1 auto" }}
             >
-                <Typography.Title level={4}>
-                    Unlock Vault
-                </Typography.Title>
+                <Typography.Title level={4}>Unlock Vault</Typography.Title>
                 <Typography.Paragraph>
                     Enter your vault password to unlock it.
                 </Typography.Paragraph>
-                <Form
-                    name="unlock-vault"
-                    layout="vertical"
-                    variant="outlined"
-                >
+                <Form name="unlock-vault" layout="vertical" variant="outlined">
                     <Form.Item
                         label="Password"
                         name="password"
@@ -82,7 +82,12 @@ export function UnlockVaultPage() {
                             }
                         ]}
                     >
-                        <Input type="password" disabled={unlocking} value={password} onChange={evt => setPassword(evt.target.value)} />
+                        <Input
+                            type="password"
+                            disabled={unlocking}
+                            value={password}
+                            onChange={(evt) => setPassword(evt.target.value)}
+                        />
                     </Form.Item>
                     <Form.Item>
                         <Button
@@ -96,10 +101,7 @@ export function UnlockVaultPage() {
                     </Form.Item>
                 </Form>
             </Flex>
-            <LoadingModal
-                open={unlocking}
-                text="Unlocking Vault"
-            />
+            <LoadingModal open={unlocking} text="Unlocking Vault" />
         </NestedPageLayout>
     );
 }

@@ -1,5 +1,22 @@
 import React, { useMemo, useState } from "react";
-import { Avatar, Col, Descriptions, Divider, Flex, Layout, List, Menu, Progress, Row, Statistic, Tabs, Tag, theme, Tree, Typography } from "antd";
+import {
+    Avatar,
+    Col,
+    Descriptions,
+    Divider,
+    Flex,
+    Layout,
+    List,
+    Menu,
+    Progress,
+    Row,
+    Statistic,
+    Tabs,
+    Tag,
+    theme,
+    Tree,
+    Typography
+} from "antd";
 import {
     AppstoreOutlined,
     CarryOutOutlined,
@@ -79,7 +96,7 @@ function getSidebarMenu() {
                 key: "entry-types",
                 icon: <ProfileOutlined />,
                 label: "Entry Types",
-                children: entryTypes.map(item => ({
+                children: entryTypes.map((item) => ({
                     key: `entry-type:${item.entryType}`,
                     icon: item.icon,
                     label: item.title
@@ -100,135 +117,146 @@ export function VaultPage() {
         throw new Error("Vault source ID required for vault page");
     }
 
-    const [sidebarType, setSidebarType] = useState<SidebarType>(SidebarType.MainMenu);
+    const [sidebarType, setSidebarType] = useState<SidebarType>(
+        SidebarType.MainMenu
+    );
 
     const vaultEdit = useVaultEditInterface(sourceID);
 
-    const { result: allEntries, running: allEntriesRunning, runs: allEntriesRuns } = useAsync(vaultEdit.getAllEntryDetails, [sourceID]);
+    const {
+        result: allEntries,
+        running: allEntriesRunning,
+        runs: allEntriesRuns
+    } = useAsync(vaultEdit.getAllEntryDetails, [sourceID]);
 
-    const treeData = useMemo(() => [
-        {
-          title: 'parent 1',
-          key: '0-0',
-          icon: <CarryOutOutlined />,
-          children: [
+    const treeData = useMemo(
+        () => [
             {
-              title: 'parent 1-0',
-              key: '0-0-0',
-              icon: <CarryOutOutlined />,
-              children: [
-                {
-                  title: 'leaf',
-                  key: '0-0-0-0',
-                  icon: <CarryOutOutlined />,
-                },
-                {
-                  title: (
-                    <>
-                      <div>multiple line title</div>
-                      <div>multiple line title</div>
-                    </>
-                  ),
-                  key: '0-0-0-1',
-                  icon: <CarryOutOutlined />,
-                },
-                {
-                  title: 'leaf',
-                  key: '0-0-0-2',
-                  icon: <CarryOutOutlined />,
-                },
-              ],
+                title: "parent 1",
+                key: "0-0",
+                icon: <CarryOutOutlined />,
+                children: [
+                    {
+                        title: "parent 1-0",
+                        key: "0-0-0",
+                        icon: <CarryOutOutlined />,
+                        children: [
+                            {
+                                title: "leaf",
+                                key: "0-0-0-0",
+                                icon: <CarryOutOutlined />
+                            },
+                            {
+                                title: (
+                                    <>
+                                        <div>multiple line title</div>
+                                        <div>multiple line title</div>
+                                    </>
+                                ),
+                                key: "0-0-0-1",
+                                icon: <CarryOutOutlined />
+                            },
+                            {
+                                title: "leaf",
+                                key: "0-0-0-2",
+                                icon: <CarryOutOutlined />
+                            }
+                        ]
+                    },
+                    {
+                        title: "parent 1-1",
+                        key: "0-0-1",
+                        icon: <CarryOutOutlined />,
+                        children: [
+                            {
+                                title: "leaf",
+                                key: "0-0-1-0",
+                                icon: <CarryOutOutlined />
+                            }
+                        ]
+                    },
+                    {
+                        title: "parent 1-2",
+                        key: "0-0-2",
+                        icon: <CarryOutOutlined />,
+                        children: [
+                            {
+                                title: "leaf",
+                                key: "0-0-2-0",
+                                icon: <CarryOutOutlined />
+                            },
+                            {
+                                title: "leaf",
+                                key: "0-0-2-1",
+                                icon: <CarryOutOutlined />,
+                                switcherIcon: <FormOutlined />
+                            }
+                        ]
+                    }
+                ]
             },
             {
-              title: 'parent 1-1',
-              key: '0-0-1',
-              icon: <CarryOutOutlined />,
-              children: [
-                {
-                  title: 'leaf',
-                  key: '0-0-1-0',
-                  icon: <CarryOutOutlined />,
-                },
-              ],
-            },
-            {
-              title: 'parent 1-2',
-              key: '0-0-2',
-              icon: <CarryOutOutlined />,
-              children: [
-                {
-                  title: 'leaf',
-                  key: '0-0-2-0',
-                  icon: <CarryOutOutlined />,
-                },
-                {
-                  title: 'leaf',
-                  key: '0-0-2-1',
-                  icon: <CarryOutOutlined />,
-                  switcherIcon: <FormOutlined />,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          title: 'parent 2',
-          key: '0-1',
-          icon: <CarryOutOutlined />,
-          children: [
-            {
-              title: 'parent 2-0',
-              key: '0-1-0',
-              icon: <CarryOutOutlined />,
-              children: [
-                {
-                  title: 'leaf',
-                  key: '0-1-0-0',
-                  icon: <CarryOutOutlined />,
-                },
-                {
-                  title: 'leaf',
-                  key: '0-1-0-1',
-                  icon: <CarryOutOutlined />,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      []
+                title: "parent 2",
+                key: "0-1",
+                icon: <CarryOutOutlined />,
+                children: [
+                    {
+                        title: "parent 2-0",
+                        key: "0-1-0",
+                        icon: <CarryOutOutlined />,
+                        children: [
+                            {
+                                title: "leaf",
+                                key: "0-1-0-0",
+                                icon: <CarryOutOutlined />
+                            },
+                            {
+                                title: "leaf",
+                                key: "0-1-0-1",
+                                icon: <CarryOutOutlined />
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        []
     );
 
     const entries = useMemo(
-        () => Array.isArray(allEntries)
-            ? allEntries.map(entry => ({
-                description: "Test",
-                icon: "https://placedog.net/48",
-                id: entry.id,
-                title: entry.title,
-                type: entry.type
-            }))
-            : [],
+        () =>
+            Array.isArray(allEntries)
+                ? allEntries.map((entry) => ({
+                      description: "Test",
+                      icon: "https://placedog.net/48",
+                      id: entry.id,
+                      title: entry.title,
+                      type: entry.type
+                  }))
+                : [],
         [allEntries]
     );
 
     const sidebarMenu = useMemo(getSidebarMenu, []);
 
-    const tags = useMemo(() => [
-        "social",
-        "work",
-        "finance",
-        "email",
-        "family",
-        "torrents",
-        "homelab",
-        "shopping",
-        "government"
-    ], []);
+    const tags = useMemo(
+        () => [
+            "social",
+            "work",
+            "finance",
+            "email",
+            "family",
+            "torrents",
+            "homelab",
+            "shopping",
+            "government"
+        ],
+        []
+    );
     const [selectedTags, setSelectedTags] = useState<Array<string>>([]);
 
     const {
-        token: { colorBgContainer, borderRadiusLG, colorBorder },
+        token: { colorBgContainer, borderRadiusLG, colorBorder }
     } = theme.useToken();
 
     return (
@@ -252,7 +280,7 @@ export function VaultPage() {
                             mode="inline"
                             defaultSelectedKeys={[sidebarMenu.default]}
                             style={{
-                                height: '100%',
+                                height: "100%",
                                 borderRight: 0
                             }}
                             items={sidebarMenu.items}
@@ -262,7 +290,7 @@ export function VaultPage() {
                         <Tree
                             showLine
                             showIcon
-                            defaultExpandedKeys={['0-0-0']}
+                            defaultExpandedKeys={["0-0-0"]}
                             onSelect={() => {}}
                             treeData={treeData}
                         />
@@ -277,16 +305,23 @@ export function VaultPage() {
                                 flexWrap: "wrap"
                             }}
                         >
-                            {...tags.map(tag => (
+                            {...tags.map((tag) => (
                                 <Tag.CheckableTag
                                     checked={selectedTags.includes(tag)}
-                                    onChange={
-                                        checked => checked
-                                            ? setSelectedTags([...new Set([
-                                                ...selectedTags,
-                                                tag
-                                            ])])
-                                            : setSelectedTags(selectedTags => selectedTags.filter(selected => selected !== tag))
+                                    onChange={(checked) =>
+                                        checked
+                                            ? setSelectedTags([
+                                                  ...new Set([
+                                                      ...selectedTags,
+                                                      tag
+                                                  ])
+                                              ])
+                                            : setSelectedTags((selectedTags) =>
+                                                  selectedTags.filter(
+                                                      (selected) =>
+                                                          selected !== tag
+                                                  )
+                                              )
                                     }
                                 >
                                     {tag}
@@ -319,7 +354,9 @@ export function VaultPage() {
                         }
                     ]}
                     activeKey={sidebarType}
-                    onTabClick={(tabKey: string) => setSidebarType(tabKey as SidebarType)}
+                    onTabClick={(tabKey: string) =>
+                        setSidebarType(tabKey as SidebarType)
+                    }
                 />
             </TabbedSider>
             <Layout
@@ -344,7 +381,11 @@ export function VaultPage() {
                             <List.Item key={item.id}>
                                 <List.Item.Meta
                                     avatar={<Avatar src={item.icon} />}
-                                    title={<a href="https://ant.design">{item.title}</a>}
+                                    title={
+                                        <a href="https://ant.design">
+                                            {item.title}
+                                        </a>
+                                    }
                                     description={item.description}
                                 />
                                 <div>Content</div>
@@ -355,7 +396,7 @@ export function VaultPage() {
             </Layout>
             <Layout
                 style={{
-                    padding: '24px 24px',
+                    padding: "24px 24px"
                 }}
             >
                 <Layout.Content
@@ -364,10 +405,12 @@ export function VaultPage() {
                         margin: 0,
                         minHeight: 280,
                         background: colorBgContainer,
-                        borderRadius: borderRadiusLG,
+                        borderRadius: borderRadiusLG
                     }}
                 >
-                    <Typography.Title level={2} style={{ marginTop: 0 }}>Deezer</Typography.Title>
+                    <Typography.Title level={2} style={{ marginTop: 0 }}>
+                        Deezer
+                    </Typography.Title>
                     <Row gutter={16}>
                         <Col span={6}>
                             <Statistic title="Logins" value={5} />
@@ -376,10 +419,18 @@ export function VaultPage() {
                             <Statistic title="Page Opened" value={8} />
                         </Col>
                         <Col span={6}>
-                            <StatisticSmallSuffix title="Password Updated" suffix="days ago" value={8} />
+                            <StatisticSmallSuffix
+                                title="Password Updated"
+                                suffix="days ago"
+                                value={8}
+                            />
                         </Col>
                         <Col span={6}>
-                        <StatisticSmallSuffix title="Created" suffix="months ago" value={5} />
+                            <StatisticSmallSuffix
+                                title="Created"
+                                suffix="months ago"
+                                value={5}
+                            />
                         </Col>
                     </Row>
                     <Divider />
@@ -389,14 +440,34 @@ export function VaultPage() {
                         column={2}
                         size="small"
                         items={[
-                            { key: "username", label: "Username", children: "user@email.com" },
-                            { key: "password", label: "Password", children: "❋❋❋❋❋❋❋❋❋❋❋❋" },
-                            { key: "url", label: "URL", children: <Typography.Link>www.some-website.com</Typography.Link> },
+                            {
+                                key: "username",
+                                label: "Username",
+                                children: "user@email.com"
+                            },
+                            {
+                                key: "password",
+                                label: "Password",
+                                children: "❋❋❋❋❋❋❋❋❋❋❋❋"
+                            },
+                            {
+                                key: "url",
+                                label: "URL",
+                                children: (
+                                    <Typography.Link>
+                                        www.some-website.com
+                                    </Typography.Link>
+                                )
+                            },
                             {
                                 key: "otp",
                                 label: "OTP",
                                 children: (
-                                    <Flex gap="middle" justify="flex-start" align="center">
+                                    <Flex
+                                        gap="middle"
+                                        justify="flex-start"
+                                        align="center"
+                                    >
                                         <Progress
                                             type="circle"
                                             trailColor="#e6f4ff"
@@ -405,11 +476,21 @@ export function VaultPage() {
                                             size={22}
                                             format={() => ""}
                                         />
-                                        <Typography.Title style={{ margin: 0 }} level={3}>293 102</Typography.Title>
+                                        <Typography.Title
+                                            style={{ margin: 0 }}
+                                            level={3}
+                                        >
+                                            293 102
+                                        </Typography.Title>
                                     </Flex>
                                 )
                             },
-                            { key: "backup", label: "Backup Codes", children: "ASDNO394884\nDS3NO394884\nASDNO394884\nXSDNO364884" },
+                            {
+                                key: "backup",
+                                label: "Backup Codes",
+                                children:
+                                    "ASDNO394884\nDS3NO394884\nASDNO394884\nXSDNO364884"
+                            }
                         ]}
                     />
                     {/* <Divider />

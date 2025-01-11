@@ -8,11 +8,7 @@ interface LoadingModalProps {
 
 export function LoadingModal(props: LoadingModalProps) {
     return (
-        <Modal
-            closable={false}
-            open={props.open}
-            footer={<></>}
-        >
+        <Modal closable={false} open={props.open} footer={<></>}>
             <Flex
                 gap="middle"
                 vertical

@@ -1,4 +1,9 @@
-import { Credentials, DatasourceConfiguration, VaultSource, VaultSourceID } from "@buttercup/core";
+import {
+    Credentials,
+    DatasourceConfiguration,
+    VaultSource,
+    VaultSourceID
+} from "@buttercup/core";
 import { SourceType } from "../../types.js";
 import { getVaultManager } from "./management.js";
 import { logInfo } from "../../library/log.js";
@@ -23,7 +28,9 @@ async function addVault(
     await vaultManager.interruptAutoUpdate(async () => {
         await vaultManager.addSource(source);
         try {
-            await source.unlock(passCredentials, { initialiseRemote: createNew });
+            await source.unlock(passCredentials, {
+                initialiseRemote: createNew
+            });
             await vaultManager.dehydrateSource(source);
         } catch (err) {
             await vaultManager.removeSource(source.id);
@@ -33,7 +40,9 @@ async function addVault(
     return source.id;
 }
 
-export async function addVaultFromPayload(payload: AddVaultPayload): Promise<VaultSourceID> {
+export async function addVaultFromPayload(
+    payload: AddVaultPayload
+): Promise<VaultSourceID> {
     let credentials: Credentials;
     switch (payload.datasourceConfig.type) {
         case SourceType.GoogleDrive:
@@ -54,7 +63,9 @@ export async function addVaultFromPayload(payload: AddVaultPayload): Promise<Vau
             break;
         }
         default:
-            throw new Error(`Unsupported vault type: ${payload.datasourceConfig.type}`);
+            throw new Error(
+                `Unsupported vault type: ${payload.datasourceConfig.type}`
+            );
     }
     logInfo(
         `Adding vault "${payload.name}" (${payload.datasourceConfig.type}) (new = ${
