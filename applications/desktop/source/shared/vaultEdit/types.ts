@@ -1,4 +1,4 @@
-import { EntryID, EntryType, VaultSourceID } from "@buttercup/core";
+import { EntryFacade, EntryID, EntryType } from "@buttercup/core";
 
 export interface VaultEditInterface {
     getAllEntryDetails: () => Promise<
@@ -12,4 +12,5 @@ export interface VaultEditInterface {
             type: EntryType;
         }>
     >;
+    getEntry: (entryID: EntryID) => Promise<EntryFacade | null>;
 }

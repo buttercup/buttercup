@@ -3,7 +3,8 @@ import { logErr } from "../library/log.js";
 
 export function useAsync<Output>(
     method: () => Promise<Output>,
-    dependencies: DependencyList = []
+    dependencies: DependencyList = [],
+    clearBetweenChanges: boolean = false
 ): {
     error: Error | null;
     result: Output | null;
@@ -20,6 +21,10 @@ export function useAsync<Output>(
     useEffect(() => {
         if (runLock.current) return;
         runLock.current = true;
+
+        if (clearBetweenChanges) {
+            setResult(null);
+        }
 
         setRunning(true);
         setError(null);
@@ -40,7 +45,7 @@ export function useAsync<Output>(
 
                 setRuns((previous) => previous + 1);
             });
-    }, [method, ...dependencies]);
+    }, [method, clearBetweenChanges, ...dependencies]);
 
     return useMemo(
         () => ({

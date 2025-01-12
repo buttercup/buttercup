@@ -3,7 +3,7 @@ import { HashRouter, Route, Routes } from "react-router";
 import { LandingPage } from "./pages/LandingPage.jsx";
 import { AddVaultPage } from "./pages/add-vault/index.jsx";
 import { UnlockVaultPage } from "./pages/UnlockVaultPage.jsx";
-import { VaultPage } from "./pages/VaultPage.jsx";
+import { VaultPage } from "./pages/vault/index.jsx";
 
 export function RouterPrimary() {
     return (

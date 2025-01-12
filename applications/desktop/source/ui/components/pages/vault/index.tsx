@@ -1,21 +1,14 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
     Avatar,
-    Col,
-    Descriptions,
-    Divider,
-    Flex,
+    Empty,
     Layout,
     List,
     Menu,
-    Progress,
-    Row,
-    Statistic,
     Tabs,
     Tag,
     theme,
-    Tree,
-    Typography
+    Tree
 } from "antd";
 import {
     AppstoreOutlined,
@@ -28,39 +21,46 @@ import {
     StarOutlined,
     TagsOutlined
 } from "@ant-design/icons";
-import { VaultSourceID } from "@buttercup/core";
+import { EntryFacade, EntryID, VaultSourceID } from "@buttercup/core";
 import { useParams } from "react-router";
 import { styled } from "styled-components";
-import { getUIEntryTypes } from "../../library/entryTypes.jsx";
-import { useVaultEditInterface } from "../../hooks/vaultEdit.js";
-import { useAsync } from "../../hooks/async.js";
-
-interface Item {
-    key: string;
-    icon?: JSX.Element;
-    children?: Array<Item>;
-    label: string;
-}
+import { getUIEntryTypes } from "../../../library/entryTypes.jsx";
+import { useVaultEditInterface } from "../../../hooks/vaultEdit.js";
+import { useAsync } from "../../../hooks/async.js";
+import { MenuItemType } from "antd/es/menu/interface.js";
+import { VaultEntry } from "./VaultEntry.jsx";
 
 enum SidebarType {
     MainMenu = "menu",
     GroupTree = "groups",
-    TagCloud = "tags"
+    TagCloud = "tags",
+    Trash = "trash"
 }
 
 type VaultPageParams = {
     id: VaultSourceID;
 };
 
-const SidebarTabs = styled(Tabs)`
-    .ant-tabs-nav {
-        margin-top: 0;
+const ListItemClickable = styled(List.Item)<{ hoverBgColour: string; selected: boolean; selectedBgColor: string; }>`
+    background-color: ${props => props.selected ? props.selectedBgColor : "inherit"};
+
+    &:hover {
+        background-color: ${props => props.hoverBgColour};
+        cursor: pointer;
     }
 `;
 
-const StatisticSmallSuffix = styled(Statistic)`
-    .ant-statistic-content-suffix {
-        font-size: 16px;
+const NoEntrySelected = styled(Empty)`
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+`;
+
+const SidebarTabs = styled(Tabs)`
+    .ant-tabs-nav {
+        margin-top: 0;
     }
 `;
 
@@ -72,7 +72,12 @@ const TabbedSider = styled(Layout.Sider)`
     }
 `;
 
-function getSidebarMenu() {
+function getSidebarMenu(): {
+    default: string;
+    items: Array<MenuItemType & {
+        children?: Array<MenuItemType>;
+    }>;
+} {
     const entryTypes = getUIEntryTypes();
     return {
         default: "all-entries",
@@ -85,12 +90,14 @@ function getSidebarMenu() {
             {
                 key: "favourites",
                 icon: <StarOutlined />,
-                label: "Favourites"
+                label: "Favourites",
+                disabled: true
             },
             {
                 key: "recents",
                 icon: <ClockCircleOutlined />,
-                label: "Recents"
+                label: "Recents",
+                disabled: true
             },
             {
                 key: "entry-types",
@@ -101,11 +108,6 @@ function getSidebarMenu() {
                     icon: item.icon,
                     label: item.title
                 }))
-            },
-            {
-                key: "trash",
-                icon: <DeleteOutlined />,
-                label: "Trash"
             }
         ]
     };
@@ -120,14 +122,6 @@ export function VaultPage() {
     const [sidebarType, setSidebarType] = useState<SidebarType>(
         SidebarType.MainMenu
     );
-
-    const vaultEdit = useVaultEditInterface(sourceID);
-
-    const {
-        result: allEntries,
-        running: allEntriesRunning,
-        runs: allEntriesRuns
-    } = useAsync(vaultEdit.getAllEntryDetails, [sourceID]);
 
     const treeData = useMemo(
         () => [
@@ -223,10 +217,21 @@ export function VaultPage() {
         []
     );
 
-    const entries = useMemo(
+    const vaultEdit = useVaultEditInterface(sourceID);
+    const entryLoader = useCallback(async () => {
+        return vaultEdit.getAllEntryDetails();
+    }, [vaultEdit]);
+
+    const {
+        result: entries,
+        running: fetchingEntries,
+        runs: entryFetchCount
+    } = useAsync(entryLoader);
+
+    const entryList = useMemo(
         () =>
-            Array.isArray(allEntries)
-                ? allEntries.map((entry) => ({
+            Array.isArray(entries)
+                ? entries.map((entry) => ({
                       description: "Test",
                       icon: "https://placedog.net/48",
                       id: entry.id,
@@ -234,8 +239,24 @@ export function VaultPage() {
                       type: entry.type
                   }))
                 : [],
-        [allEntries]
+        [entries]
     );
+
+    // const [entry, setEntry] = useState<EntryFacade | null>(null);
+    // const setEntryByID = useCallback((id: EntryID) => {
+    //     // if (!Array.isArray(entries)) return;
+
+    //     // const targetEntry = entries.find(item => item.id === id);
+    //     // if (targetEntry) {
+    //     //     setEntry(targetEntry);
+    //     // }
+    // }, [entries]);
+    const [entryID, setEntryID] = useState<EntryID | null>(null);
+    const loadEntry = useCallback(async () => {
+        if (!entryID) return null;
+        return vaultEdit.getEntry(entryID);
+    }, [entryID, vaultEdit]);
+    const { result: entry } = useAsync(loadEntry, [], true);
 
     const sidebarMenu = useMemo(getSidebarMenu, []);
 
@@ -256,7 +277,7 @@ export function VaultPage() {
     const [selectedTags, setSelectedTags] = useState<Array<string>>([]);
 
     const {
-        token: { colorBgContainer, borderRadiusLG, colorBorder }
+        token: { colorBgContainer, colorInfoBg, colorInfoBgHover, borderRadiusLG, colorBorder }
     } = theme.useToken();
 
     return (
@@ -307,6 +328,7 @@ export function VaultPage() {
                         >
                             {...tags.map((tag) => (
                                 <Tag.CheckableTag
+                                    key={tag}
                                     checked={selectedTags.includes(tag)}
                                     onChange={(checked) =>
                                         checked
@@ -350,6 +372,13 @@ export function VaultPage() {
                             label: null,
                             icon: <TagsOutlined />,
                             key: SidebarType.TagCloud,
+                            children: <></>,
+                            disabled: true
+                        },
+                        {
+                            label: null,
+                            icon: <DeleteOutlined />,
+                            key: SidebarType.Trash,
                             children: <></>
                         }
                     ]}
@@ -376,130 +405,57 @@ export function VaultPage() {
                     }}
                 >
                     <List
-                        dataSource={entries}
+                        dataSource={entryList}
                         renderItem={(item) => (
-                            <List.Item key={item.id}>
+                            <ListItemClickable
+                                key={item.id}
+                                hoverBgColour={colorInfoBgHover}
+                                onClick={() => setEntryID(item.id)}
+                                selected={item.id === entry?.id}
+                                selectedBgColor={colorInfoBg}
+                            >
                                 <List.Item.Meta
                                     avatar={<Avatar src={item.icon} />}
-                                    title={
-                                        <a href="https://ant.design">
-                                            {item.title}
-                                        </a>
-                                    }
+                                    title={item.title}
                                     description={item.description}
                                 />
                                 <div>Content</div>
-                            </List.Item>
+                            </ListItemClickable>
                         )}
                     />
                 </Layout.Content>
             </Layout>
             <Layout
                 style={{
-                    padding: "24px 24px"
+                    display: "block",
+                    overflowY: "scroll",
+                    padding: "24px"
                 }}
             >
-                <Layout.Content
-                    style={{
-                        padding: 24,
-                        margin: 0,
-                        minHeight: 280,
-                        background: colorBgContainer,
-                        borderRadius: borderRadiusLG
-                    }}
-                >
-                    <Typography.Title level={2} style={{ marginTop: 0 }}>
-                        Deezer
-                    </Typography.Title>
-                    <Row gutter={16}>
-                        <Col span={6}>
-                            <Statistic title="Logins" value={5} />
-                        </Col>
-                        <Col span={6}>
-                            <Statistic title="Page Opened" value={8} />
-                        </Col>
-                        <Col span={6}>
-                            <StatisticSmallSuffix
-                                title="Password Updated"
-                                suffix="days ago"
-                                value={8}
-                            />
-                        </Col>
-                        <Col span={6}>
-                            <StatisticSmallSuffix
-                                title="Created"
-                                suffix="months ago"
-                                value={5}
-                            />
-                        </Col>
-                    </Row>
-                    <Divider />
-                    <Descriptions
-                        title="Login"
-                        bordered
-                        column={2}
-                        size="small"
-                        items={[
-                            {
-                                key: "username",
-                                label: "Username",
-                                children: "user@email.com"
-                            },
-                            {
-                                key: "password",
-                                label: "Password",
-                                children: "❋❋❋❋❋❋❋❋❋❋❋❋"
-                            },
-                            {
-                                key: "url",
-                                label: "URL",
-                                children: (
-                                    <Typography.Link>
-                                        www.some-website.com
-                                    </Typography.Link>
-                                )
-                            },
-                            {
-                                key: "otp",
-                                label: "OTP",
-                                children: (
-                                    <Flex
-                                        gap="middle"
-                                        justify="flex-start"
-                                        align="center"
-                                    >
-                                        <Progress
-                                            type="circle"
-                                            trailColor="#e6f4ff"
-                                            percent={60}
-                                            strokeWidth={20}
-                                            size={22}
-                                            format={() => ""}
-                                        />
-                                        <Typography.Title
-                                            style={{ margin: 0 }}
-                                            level={3}
-                                        >
-                                            293 102
-                                        </Typography.Title>
-                                    </Flex>
-                                )
-                            },
-                            {
-                                key: "backup",
-                                label: "Backup Codes",
-                                children:
-                                    "ASDNO394884\nDS3NO394884\nASDNO394884\nXSDNO364884"
-                            }
-                        ]}
-                    />
-                    {/* <Divider />
-                    <div>
-                        <Card style={{ width: "58px", padding: "0px" }}>
-                            <FileZipOutlined/>
-                        </Card>
-                    </div> */}
-                </Layout.Content>
+                {entry && (
+                    <Layout.Content
+                        style={{
+                            padding: 24,
+                            margin: 0,
+                            // minHeight: 280,
+                            overflow: "hidden",
+                            background: colorBgContainer,
+                            borderRadius: borderRadiusLG
+                        }}
+                    >
+                        <VaultEntry entry={entry} />
+                    </Layout.Content>
+                )}
+                {!entry && (
+                    <Layout.Content
+                        style={{
+                            margin: 0,
+                            height: "100%"
+                        }}
+                    >
+                        <NoEntrySelected image={Empty.PRESENTED_IMAGE_SIMPLE} description="No entry selected" />
+                    </Layout.Content>
+                )}
             </Layout>
         </Layout>
     );

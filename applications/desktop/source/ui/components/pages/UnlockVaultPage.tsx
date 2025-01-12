@@ -83,6 +83,7 @@ export function UnlockVaultPage() {
                         ]}
                     >
                         <Input
+                            autoFocus
                             type="password"
                             disabled={unlocking}
                             value={password}

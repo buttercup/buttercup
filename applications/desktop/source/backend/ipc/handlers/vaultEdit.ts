@@ -1,7 +1,7 @@
 import { VaultSourceID } from "@buttercup/core";
 import { registerHandler } from "../interface.js";
 import { VaultEditInterface } from "../../../shared/vaultEdit/types.js";
-import { getAllEntryDetails } from "../../services/buttercup/vaultEdit.js";
+import { getAllEntryDetails, getEntry } from "../../services/buttercup/vaultEdit.js";
 import { IPC } from "../types.js";
 
 export function registerVaultEditHandlers(ipc: IPC) {
@@ -15,6 +15,13 @@ export function registerVaultEditHandlers(ipc: IPC) {
                 return getAllEntryDetails(sourceID) as ReturnType<
                     VaultEditInterface[Method]
                 >;
+
+            case "getEntry": {
+                const [entryID] = args as Parameters<VaultEditInterface["getEntry"]>;
+                return getEntry(sourceID, entryID) as ReturnType<
+                    VaultEditInterface[Method]
+                >;
+            }
 
             default:
                 throw new Error(
