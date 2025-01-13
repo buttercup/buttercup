@@ -5,6 +5,7 @@ import {
     Layout,
     List,
     Menu,
+    Splitter,
     Tabs,
     Tag,
     theme,
@@ -40,6 +41,10 @@ enum SidebarType {
 type VaultPageParams = {
     id: VaultSourceID;
 };
+
+const MIN_WIDTH_DETAILS = 410;
+const MIN_WIDTH_ENTRIES = 300;
+const MIN_WIDTH_MENU = 200;
 
 const ListItemClickable = styled(List.Item)<{ hoverBgColour: string; selected: boolean; selectedBgColor: string; }>`
     background-color: ${props => props.selected ? props.selectedBgColor : "inherit"};
@@ -242,15 +247,6 @@ export function VaultPage() {
         [entries]
     );
 
-    // const [entry, setEntry] = useState<EntryFacade | null>(null);
-    // const setEntryByID = useCallback((id: EntryID) => {
-    //     // if (!Array.isArray(entries)) return;
-
-    //     // const targetEntry = entries.find(item => item.id === id);
-    //     // if (targetEntry) {
-    //     //     setEntry(targetEntry);
-    //     // }
-    // }, [entries]);
     const [entryID, setEntryID] = useState<EntryID | null>(null);
     const loadEntry = useCallback(async () => {
         if (!entryID) return null;
@@ -277,7 +273,7 @@ export function VaultPage() {
     const [selectedTags, setSelectedTags] = useState<Array<string>>([]);
 
     const {
-        token: { colorBgContainer, colorInfoBg, colorInfoBgHover, borderRadiusLG, colorBorder }
+        token: { colorBgContainer, colorInfoBg, colorInfoBgHover, borderRadiusLG }
     } = theme.useToken();
 
     return (
@@ -286,177 +282,175 @@ export function VaultPage() {
                 height: "100vh"
             }}
         >
-            <TabbedSider
-                width={200}
-                style={{
-                    background: colorBgContainer,
-                    borderRightStyle: "solid",
-                    borderRightWidth: "1px",
-                    borderRightColor: colorBorder
-                }}
-            >
-                <div style={{ flex: "1 1 auto", overflowY: "scroll" }}>
-                    {sidebarType === SidebarType.MainMenu && (
-                        <Menu
-                            mode="inline"
-                            defaultSelectedKeys={[sidebarMenu.default]}
-                            style={{
-                                height: "100%",
-                                borderRight: 0
-                            }}
-                            items={sidebarMenu.items}
-                        />
-                    )}
-                    {sidebarType === SidebarType.GroupTree && (
-                        <Tree
-                            showLine
-                            showIcon
-                            defaultExpandedKeys={["0-0-0"]}
-                            onSelect={() => {}}
-                            treeData={treeData}
-                        />
-                    )}
-                    {sidebarType === SidebarType.TagCloud && (
-                        <div
-                            style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                flexWrap: "wrap"
-                            }}
-                        >
-                            {...tags.map((tag) => (
-                                <Tag.CheckableTag
-                                    key={tag}
-                                    checked={selectedTags.includes(tag)}
-                                    onChange={(checked) =>
-                                        checked
-                                            ? setSelectedTags([
-                                                  ...new Set([
-                                                      ...selectedTags,
-                                                      tag
-                                                  ])
-                                              ])
-                                            : setSelectedTags((selectedTags) =>
-                                                  selectedTags.filter(
-                                                      (selected) =>
-                                                          selected !== tag
-                                                  )
-                                              )
-                                    }
-                                >
-                                    {tag}
-                                </Tag.CheckableTag>
-                            ))}
-                        </div>
-                    )}
-                </div>
-                <SidebarTabs
-                    tabPosition="bottom"
-                    centered
-                    items={[
-                        {
-                            label: null,
-                            icon: <AppstoreOutlined />,
-                            key: SidebarType.MainMenu,
-                            children: <></>
-                        },
-                        {
-                            label: null,
-                            icon: <GroupOutlined />,
-                            key: SidebarType.GroupTree,
-                            children: <></>
-                        },
-                        {
-                            label: null,
-                            icon: <TagsOutlined />,
-                            key: SidebarType.TagCloud,
-                            children: <></>,
-                            disabled: true
-                        },
-                        {
-                            label: null,
-                            icon: <DeleteOutlined />,
-                            key: SidebarType.Trash,
-                            children: <></>
-                        }
-                    ]}
-                    activeKey={sidebarType}
-                    onTabClick={(tabKey: string) =>
-                        setSidebarType(tabKey as SidebarType)
-                    }
-                />
-            </TabbedSider>
-            <Layout
-                style={{
-                    maxWidth: "280px",
-                    borderRightStyle: "solid",
-                    borderRightWidth: "1px",
-                    borderRightColor: colorBorder
-                }}
-            >
-                <Layout.Content
-                    style={{
-                        background: colorBgContainer,
-                        height: "100%",
-                        overflowY: "scroll",
-                        padding: "0 16px"
-                    }}
-                >
-                    <List
-                        dataSource={entryList}
-                        renderItem={(item) => (
-                            <ListItemClickable
-                                key={item.id}
-                                hoverBgColour={colorInfoBgHover}
-                                onClick={() => setEntryID(item.id)}
-                                selected={item.id === entry?.id}
-                                selectedBgColor={colorInfoBg}
-                            >
-                                <List.Item.Meta
-                                    avatar={<Avatar src={item.icon} />}
-                                    title={item.title}
-                                    description={item.description}
-                                />
-                                <div>Content</div>
-                            </ListItemClickable>
-                        )}
-                    />
-                </Layout.Content>
-            </Layout>
-            <Layout
-                style={{
-                    display: "block",
-                    overflowY: "scroll",
-                    padding: "24px"
-                }}
-            >
-                {entry && (
-                    <Layout.Content
+            <Splitter>
+                <Splitter.Panel min={MIN_WIDTH_MENU} defaultSize={MIN_WIDTH_MENU}>
+                    <TabbedSider
+                        width="100%"
                         style={{
-                            padding: 24,
-                            margin: 0,
-                            // minHeight: 280,
-                            overflow: "hidden",
                             background: colorBgContainer,
-                            borderRadius: borderRadiusLG
-                        }}
-                    >
-                        <VaultEntry entry={entry} />
-                    </Layout.Content>
-                )}
-                {!entry && (
-                    <Layout.Content
-                        style={{
-                            margin: 0,
                             height: "100%"
                         }}
                     >
-                        <NoEntrySelected image={Empty.PRESENTED_IMAGE_SIMPLE} description="No entry selected" />
-                    </Layout.Content>
-                )}
-            </Layout>
+                        <div style={{ flex: "1 1 auto", overflowY: "scroll" }}>
+                            {sidebarType === SidebarType.MainMenu && (
+                                <Menu
+                                    mode="inline"
+                                    defaultSelectedKeys={[sidebarMenu.default]}
+                                    style={{
+                                        height: "100%",
+                                        borderRight: 0
+                                    }}
+                                    items={sidebarMenu.items}
+                                />
+                            )}
+                            {sidebarType === SidebarType.GroupTree && (
+                                <Tree
+                                    showLine
+                                    showIcon
+                                    defaultExpandedKeys={["0-0-0"]}
+                                    onSelect={() => {}}
+                                    treeData={treeData}
+                                />
+                            )}
+                            {sidebarType === SidebarType.TagCloud && (
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        flexWrap: "wrap"
+                                    }}
+                                >
+                                    {...tags.map((tag) => (
+                                        <Tag.CheckableTag
+                                            key={tag}
+                                            checked={selectedTags.includes(tag)}
+                                            onChange={(checked) =>
+                                                checked
+                                                    ? setSelectedTags([
+                                                            ...new Set([
+                                                                ...selectedTags,
+                                                                tag
+                                                            ])
+                                                        ])
+                                                    : setSelectedTags((selectedTags) =>
+                                                            selectedTags.filter(
+                                                                (selected) =>
+                                                                    selected !== tag
+                                                            )
+                                                        )
+                                            }
+                                        >
+                                            {tag}
+                                        </Tag.CheckableTag>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        <SidebarTabs
+                            tabPosition="bottom"
+                            centered
+                            items={[
+                                {
+                                    label: null,
+                                    icon: <AppstoreOutlined />,
+                                    key: SidebarType.MainMenu,
+                                    children: <></>
+                                },
+                                {
+                                    label: null,
+                                    icon: <GroupOutlined />,
+                                    key: SidebarType.GroupTree,
+                                    children: <></>
+                                },
+                                {
+                                    label: null,
+                                    icon: <TagsOutlined />,
+                                    key: SidebarType.TagCloud,
+                                    children: <></>,
+                                    disabled: true
+                                },
+                                {
+                                    label: null,
+                                    icon: <DeleteOutlined />,
+                                    key: SidebarType.Trash,
+                                    children: <></>
+                                }
+                            ]}
+                            activeKey={sidebarType}
+                            onTabClick={(tabKey: string) =>
+                                setSidebarType(tabKey as SidebarType)
+                            }
+                        />
+                    </TabbedSider>
+                </Splitter.Panel>
+                <Splitter.Panel min={MIN_WIDTH_ENTRIES} defaultSize={MIN_WIDTH_ENTRIES}>
+                    <Layout>
+                        <Layout.Content
+                            style={{
+                                background: colorBgContainer,
+                                height: "100%",
+                                overflowY: "scroll",
+                                padding: "0 16px"
+                            }}
+                        >
+                            <List
+                                dataSource={entryList}
+                                renderItem={(item) => (
+                                    <ListItemClickable
+                                        key={item.id}
+                                        hoverBgColour={colorInfoBgHover}
+                                        onClick={() => setEntryID(item.id)}
+                                        selected={item.id === entry?.id}
+                                        selectedBgColor={colorInfoBg}
+                                    >
+                                        <List.Item.Meta
+                                            avatar={<Avatar src={item.icon} />}
+                                            title={item.title}
+                                            description={item.description}
+                                        />
+                                        <div>Content</div>
+                                    </ListItemClickable>
+                                )}
+                            />
+                        </Layout.Content>
+                    </Layout>
+                </Splitter.Panel>
+                <Splitter.Panel min={MIN_WIDTH_DETAILS}>
+                    <Layout
+                        style={{
+                            display: "block",
+                            overflowY: "scroll",
+                            padding: "24px"
+                        }}
+                    >
+                        {entry && (
+                            <Layout.Content
+                                style={{
+                                    padding: 24,
+                                    margin: 0,
+                                    overflow: "hidden",
+                                    background: colorBgContainer,
+                                    borderRadius: borderRadiusLG
+                                }}
+                            >
+                                <VaultEntry entry={entry} />
+                            </Layout.Content>
+                        )}
+                        {!entry && (
+                            <Layout.Content
+                                style={{
+                                    margin: 0,
+                                    height: "100%"
+                                }}
+                            >
+                                <NoEntrySelected image={Empty.PRESENTED_IMAGE_SIMPLE} description="No entry selected" />
+                            </Layout.Content>
+                        )}
+                    </Layout>
+                </Splitter.Panel>
+            </Splitter>
         </Layout>
     );
 }

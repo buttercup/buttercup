@@ -9,9 +9,7 @@ import { isLinux, isWindows } from "../library/platform.js";
 import { getRootProjectPath } from "../library/paths.js";
 import { getConfigValue, setConfigValue } from "./config.js";
 import { logErr, logInfo } from "../library/log.js";
-
-const WINDOW_MIN_HEIGHT = 530;
-const WINDOW_MIN_WIDTH = 800;
+import { WINDOW_MIN_HEIGHT, WINDOW_MIN_WIDTH } from "../symbols.js";
 
 const __vaultWindows: Array<BrowserWindow> = [];
 

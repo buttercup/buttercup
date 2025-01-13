@@ -13,6 +13,7 @@ import {
     VAULT_SETTINGS_DEFAULT
 } from "../../shared/symbols.js";
 import { Config, Preferences, VaultSettingsLocal } from "../types.js";
+import { WINDOW_MIN_HEIGHT, WINDOW_MIN_WIDTH } from "../symbols.js";
 
 const DEFAULT_CONFIG: Config = {
     browserClients: {},
@@ -22,8 +23,8 @@ const DEFAULT_CONFIG: Config = {
     isMaximised: false,
     preferences: naiveClone(PREFERENCES_DEFAULT),
     selectedSource: null,
-    windowHeight: 600,
-    windowWidth: 800,
+    windowHeight: WINDOW_MIN_HEIGHT,
+    windowWidth: WINDOW_MIN_WIDTH,
     windowX: null,
     windowY: null
 };
