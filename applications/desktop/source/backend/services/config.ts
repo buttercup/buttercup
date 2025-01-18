@@ -10,6 +10,8 @@ import { logErr, logInfo } from "../library/log.js";
 import { runConfigMigrations } from "./migration.js";
 import {
     PREFERENCES_DEFAULT,
+    VAULT_EDIT_MIN_WIDTH_ENTRIES,
+    VAULT_EDIT_MIN_WIDTH_MENU,
     VAULT_SETTINGS_DEFAULT
 } from "../../shared/symbols.js";
 import { Config, Preferences, VaultSettingsLocal } from "../types.js";
@@ -23,6 +25,8 @@ const DEFAULT_CONFIG: Config = {
     isMaximised: false,
     preferences: naiveClone(PREFERENCES_DEFAULT),
     selectedSource: null,
+    vaultEditSplitEntriesWidth: VAULT_EDIT_MIN_WIDTH_ENTRIES,
+    vaultEditSplitMenuWidth: VAULT_EDIT_MIN_WIDTH_MENU,
     windowHeight: WINDOW_MIN_HEIGHT,
     windowWidth: WINDOW_MIN_WIDTH,
     windowX: null,
@@ -37,6 +41,15 @@ export async function getConfigValue<K extends keyof Config>(
     return typeof value === "undefined" || value === null
         ? DEFAULT_CONFIG[key] || null
         : value;
+}
+
+export async function getConfigValues(): Promise<Config> {
+    const storage = getConfigStorage();
+    const values = await storage.getValues();
+    return Object.keys(DEFAULT_CONFIG).reduce((output: Partial<Config>, key: string) => ({
+        ...output,
+        [key]: typeof values[key] === "undefined" || values[key] === null ? DEFAULT_CONFIG[key as keyof Config] || null : values[key]
+    }), {}) as Config;
 }
 
 export async function getVaultSettings(

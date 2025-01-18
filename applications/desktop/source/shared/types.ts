@@ -37,6 +37,8 @@ export interface Config {
     isMaximised: boolean;
     preferences: Preferences;
     selectedSource: null | string;
+    vaultEditSplitEntriesWidth: number;
+    vaultEditSplitMenuWidth: number;
     windowHeight: number;
     windowWidth: number;
     windowX: null | number;
@@ -49,12 +51,13 @@ export interface DatasourceConfig {
 }
 
 export interface IPCInterface {
-    emit_frontend_log: (level: LogLevel, message: string) => Promise<void>;
+    emit_frontend_log: (level: LogLevel, message: string) => void;
     execute_vault_edit_action: <Method extends keyof VaultEditInterface>(
         sourceID: VaultSourceID,
         method: Method,
         args: Parameters<VaultEditInterface[Method]>
     ) => Promise<Awaited<ReturnType<VaultEditInterface[Method]>>>;
+    get_config: () => Config;
     get_vaults_list: () => Array<VaultSourceDescription>;
     local_file_add_existing: (
         name: string,
@@ -63,6 +66,7 @@ export interface IPCInterface {
     ) => void;
     local_file_browse_existing: () => { filePath: string | null };
     lock_vault: (sourceID: VaultSourceID) => void;
+    set_config_value: <Key extends keyof Config>(key: Key, value: Config[Key]) => Config;
     unlock_vault: (sourceID: VaultSourceID, password: string) => void;
 }
 

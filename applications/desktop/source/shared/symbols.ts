@@ -57,6 +57,10 @@ export const PREFERENCES_DEFAULT: Preferences = {
     uiTheme: ThemeSource.System
 };
 
+export const VAULT_EDIT_MIN_WIDTH_DETAILS = 410;
+export const VAULT_EDIT_MIN_WIDTH_ENTRIES = 300;
+export const VAULT_EDIT_MIN_WIDTH_MENU = 200;
+
 export const VAULT_SETTINGS_DEFAULT: VaultSettingsLocal = {
     localBackup: false,
     localBackupLocation: null,

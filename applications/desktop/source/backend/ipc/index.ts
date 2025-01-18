@@ -3,6 +3,8 @@ import { registerLocalFileDatasourceHandlers } from "./handlers/localFileDatasou
 import { registerVaultSourceHandlers } from "./handlers/vaultSources.js";
 import { registerLockUnlockHandlers } from "./handlers/vaultLockUnlock.js";
 import { registerVaultEditHandlers } from "./handlers/vaultEdit.js";
+import { registerLogHandlers } from "./handlers/logs.js";
+import { registerConfigHandlers } from "./handlers/config.js";
 
 export function initialise() {
     const ipc = ipcMain;
@@ -11,4 +13,6 @@ export function initialise() {
     registerVaultSourceHandlers(ipc);
     registerLockUnlockHandlers(ipc);
     registerVaultEditHandlers(ipc);
+    registerLogHandlers(ipc);
+    registerConfigHandlers(ipc);
 }

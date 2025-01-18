@@ -22,7 +22,7 @@ import {
     StarOutlined,
     TagsOutlined
 } from "@ant-design/icons";
-import { EntryFacade, EntryID, VaultSourceID } from "@buttercup/core";
+import { EntryID, VaultSourceID } from "@buttercup/core";
 import { useParams } from "react-router";
 import { styled } from "styled-components";
 import { getUIEntryTypes } from "../../../library/entryTypes.jsx";
@@ -30,6 +30,8 @@ import { useVaultEditInterface } from "../../../hooks/vaultEdit.js";
 import { useAsync } from "../../../hooks/async.js";
 import { MenuItemType } from "antd/es/menu/interface.js";
 import { VaultEntry } from "./VaultEntry.jsx";
+import { VAULT_EDIT_MIN_WIDTH_DETAILS, VAULT_EDIT_MIN_WIDTH_ENTRIES, VAULT_EDIT_MIN_WIDTH_MENU } from "../../../../shared/symbols.js";
+import { useConfig } from "../../../hooks/config.js";
 
 enum SidebarType {
     MainMenu = "menu",
@@ -41,10 +43,6 @@ enum SidebarType {
 type VaultPageParams = {
     id: VaultSourceID;
 };
-
-const MIN_WIDTH_DETAILS = 410;
-const MIN_WIDTH_ENTRIES = 300;
-const MIN_WIDTH_MENU = 200;
 
 const ListItemClickable = styled(List.Item)<{ hoverBgColour: string; selected: boolean; selectedBgColor: string; }>`
     background-color: ${props => props.selected ? props.selectedBgColor : "inherit"};
@@ -272,6 +270,15 @@ export function VaultPage() {
     );
     const [selectedTags, setSelectedTags] = useState<Array<string>>([]);
 
+    const { config, setConfigValue } = useConfig();
+    const setSeparatorSizes = useCallback((sizes: Array<number>) => {
+        const [menuWidth, entriesWidth] = sizes;
+        if (menuWidth > 0 && entriesWidth > 0) {
+            setConfigValue("vaultEditSplitMenuWidth", menuWidth);
+            setConfigValue("vaultEditSplitEntriesWidth", entriesWidth);
+        }
+    }, [setConfigValue]);
+
     const {
         token: { colorBgContainer, colorInfoBg, colorInfoBgHover, borderRadiusLG }
     } = theme.useToken();
@@ -282,8 +289,12 @@ export function VaultPage() {
                 height: "100vh"
             }}
         >
-            <Splitter>
-                <Splitter.Panel min={MIN_WIDTH_MENU} defaultSize={MIN_WIDTH_MENU}>
+            <Splitter onResize={setSeparatorSizes}>
+                <Splitter.Panel
+                    min={VAULT_EDIT_MIN_WIDTH_MENU}
+                    defaultSize={VAULT_EDIT_MIN_WIDTH_MENU}
+                    size={config?.vaultEditSplitMenuWidth}
+                >
                     <TabbedSider
                         width="100%"
                         style={{
@@ -385,7 +396,11 @@ export function VaultPage() {
                         />
                     </TabbedSider>
                 </Splitter.Panel>
-                <Splitter.Panel min={MIN_WIDTH_ENTRIES} defaultSize={MIN_WIDTH_ENTRIES}>
+                <Splitter.Panel
+                    min={VAULT_EDIT_MIN_WIDTH_ENTRIES}
+                    defaultSize={VAULT_EDIT_MIN_WIDTH_ENTRIES}
+                    size={config?.vaultEditSplitEntriesWidth}
+                >
                     <Layout>
                         <Layout.Content
                             style={{
@@ -417,7 +432,7 @@ export function VaultPage() {
                         </Layout.Content>
                     </Layout>
                 </Splitter.Panel>
-                <Splitter.Panel min={MIN_WIDTH_DETAILS}>
+                <Splitter.Panel min={VAULT_EDIT_MIN_WIDTH_DETAILS}>
                     <Layout
                         style={{
                             display: "block",
