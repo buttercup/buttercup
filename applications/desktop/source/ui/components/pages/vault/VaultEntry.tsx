@@ -9,11 +9,12 @@ import {
     Statistic,
     Typography
 } from "antd";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { styled } from "styled-components";
 import { EntryDetailsDefault } from "./details/EntryDetailsDefault.jsx";
 import { EntryDetailsNote } from "./details/EntryDetailsNote.jsx";
 import { EntryDetailsCreditCard } from "./details/EntryDetailsCreditCard.jsx";
+import { useWidth } from "../../../hooks/resize.js";
 
 interface VaultEntryProps {
     entry: EntryFacade;
@@ -36,10 +37,13 @@ export function VaultEntry(props: VaultEntryProps) {
         [props.entry]
     );
 
+    const [resizeTarget, setResizeTarget] = useState<HTMLDivElement | null>(null);
+    const currentWidth = useWidth(resizeTarget);
 
+    const columns = currentWidth >= 545 ? 2 : 1;
 
     return (
-        <>
+        <div ref={setResizeTarget}>
             <Typography.Title level={2} style={{ marginTop: 0 }}>
                 {title}
             </Typography.Title>
@@ -66,17 +70,39 @@ export function VaultEntry(props: VaultEntryProps) {
                 </Col>
             </Row>
             <Divider /> */}
-            {props.entry.type === EntryType.CreditCard && (<EntryDetailsCreditCard entry={props.entry} />)}
-            {props.entry.type === EntryType.Login && (<EntryDetailsDefault entry={props.entry} />)}
-            {props.entry.type === EntryType.Note && (<EntryDetailsNote entry={props.entry} />)}
-            {props.entry.type === EntryType.SSHKey && (<EntryDetailsDefault entry={props.entry} />)}
-            {props.entry.type === EntryType.Website && (<EntryDetailsDefault entry={props.entry} />)}
+            {props.entry.type === EntryType.CreditCard && (
+                <EntryDetailsCreditCard
+                    detailColumns={columns}
+                    entry={props.entry}
+                />
+            )}
+            {props.entry.type === EntryType.Login && (
+                <EntryDetailsDefault
+                    detailColumns={columns}
+                    entry={props.entry}
+                />
+            )}
+            {props.entry.type === EntryType.Note && (
+                <EntryDetailsNote detailColumns={columns} entry={props.entry} />
+            )}
+            {props.entry.type === EntryType.SSHKey && (
+                <EntryDetailsDefault
+                    detailColumns={columns}
+                    entry={props.entry}
+                />
+            )}
+            {props.entry.type === EntryType.Website && (
+                <EntryDetailsDefault
+                    detailColumns={columns}
+                    entry={props.entry}
+                />
+            )}
             {/* <Divider />
             <div>
                 <Card style={{ width: "58px", padding: "0px" }}>
                     <FileZipOutlined/>
                 </Card>
             </div> */}
-        </>
+        </div>
     );
 }

@@ -265,7 +265,6 @@ export function VaultPage() {
                             )}
                             {sidebarType === SidebarType.GroupTree && (
                                 <Tree
-                                    // defaultExpandedKeys={["0-0-0"]}
                                     expandedKeys={openedGroups}
                                     onExpand={(expanded) => setOpenedGroups(expanded.map(item => item.toString()))}
                                     onSelect={(selected) => setGroupTreeSelectedGroupID(selected[0]?.toString() ?? null)}

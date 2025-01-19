@@ -7,10 +7,13 @@ import { getUIEntryTypes } from "../../../../library/entryTypes.jsx";
 import { PASSWORD_MASK } from "../util.jsx";
 
 interface EntryDetailsDefaultProps {
+    detailColumns?: number;
     entry: EntryFacade;
 }
 
 export function EntryDetailsDefault(props: EntryDetailsDefaultProps) {
+    const { detailColumns = 2 } = props;
+
     const entryTypes = useMemo(getUIEntryTypes, []);
     const entryTypeName = useMemo(
         () =>
@@ -30,11 +33,11 @@ export function EntryDetailsDefault(props: EntryDetailsDefaultProps) {
 
     return (
         <Descriptions
-            title={entryTypeName}
             bordered
-            column={2}
-            size="small"
+            column={detailColumns}
             items={properties}
+            size="small"
+            title={entryTypeName}
         />
     )
 }

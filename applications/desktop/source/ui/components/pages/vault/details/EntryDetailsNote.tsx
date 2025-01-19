@@ -7,10 +7,13 @@ import { PASSWORD_MASK } from "../util.jsx";
 import { sortAndFilterProperties } from "../../../../library/entryProperties.js";
 
 interface EntryDetailsNoteProps {
+    detailColumns?: number;
     entry: EntryFacade;
 }
 
 export function EntryDetailsNote(props: EntryDetailsNoteProps) {
+    const { detailColumns = 2 } = props;
+
     const entryTypes = useMemo(getUIEntryTypes, []);
     const entryTypeName = useMemo(
         () =>
@@ -42,9 +45,9 @@ export function EntryDetailsNote(props: EntryDetailsNoteProps) {
             )}
             <Descriptions
                 bordered
-                column={2}
-                size="small"
+                column={detailColumns}
                 items={properties}
+                size="small"
             />
         </>
     );

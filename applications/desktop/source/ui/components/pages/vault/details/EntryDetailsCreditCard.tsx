@@ -7,10 +7,13 @@ import { PASSWORD_MASK } from "../util.jsx";
 import { sortAndFilterProperties } from "../../../../library/entryProperties.js";
 
 interface EntryDetailsCreditCardProps {
+    detailColumns?: number;
     entry: EntryFacade;
 }
 
 export function EntryDetailsCreditCard(props: EntryDetailsCreditCardProps) {
+    const { detailColumns = 2 } = props;
+
     const entryTypes = useMemo(getUIEntryTypes, []);
     const entryTypeName = useMemo(
         () =>
@@ -32,11 +35,11 @@ export function EntryDetailsCreditCard(props: EntryDetailsCreditCardProps) {
     return (
         <>
             <Descriptions
-                title={entryTypeName}
                 bordered
-                column={2}
-                size="small"
+                column={detailColumns}
                 items={properties}
+                size="small"
+                title={entryTypeName}
             />
         </>
     );
