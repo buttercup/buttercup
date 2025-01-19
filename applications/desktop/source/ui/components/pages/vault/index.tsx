@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     Avatar,
     Empty,
@@ -13,16 +13,14 @@ import {
 } from "antd";
 import {
     AppstoreOutlined,
-    CarryOutOutlined,
     ClockCircleOutlined,
     DeleteOutlined,
-    FormOutlined,
     GroupOutlined,
     ProfileOutlined,
     StarOutlined,
     TagsOutlined
 } from "@ant-design/icons";
-import { EntryID, VaultSourceID } from "@buttercup/core";
+import { EntryID, GroupID, VaultSourceID } from "@buttercup/core";
 import { useParams } from "react-router";
 import { styled } from "styled-components";
 import { getUIEntryTypes } from "../../../library/entryTypes.jsx";
@@ -32,6 +30,7 @@ import { MenuItemType } from "antd/es/menu/interface.js";
 import { VaultEntry } from "./VaultEntry.jsx";
 import { VAULT_EDIT_MIN_WIDTH_DETAILS, VAULT_EDIT_MIN_WIDTH_ENTRIES, VAULT_EDIT_MIN_WIDTH_MENU } from "../../../../shared/symbols.js";
 import { useConfig } from "../../../hooks/config.js";
+import { groupFacadesToTree } from "./util.jsx";
 
 enum SidebarType {
     MainMenu = "menu",
@@ -126,110 +125,60 @@ export function VaultPage() {
         SidebarType.MainMenu
     );
 
-    const treeData = useMemo(
-        () => [
-            {
-                title: "parent 1",
-                key: "0-0",
-                icon: <CarryOutOutlined />,
-                children: [
-                    {
-                        title: "parent 1-0",
-                        key: "0-0-0",
-                        icon: <CarryOutOutlined />,
-                        children: [
-                            {
-                                title: "leaf",
-                                key: "0-0-0-0",
-                                icon: <CarryOutOutlined />
-                            },
-                            {
-                                title: (
-                                    <>
-                                        <div>multiple line title</div>
-                                        <div>multiple line title</div>
-                                    </>
-                                ),
-                                key: "0-0-0-1",
-                                icon: <CarryOutOutlined />
-                            },
-                            {
-                                title: "leaf",
-                                key: "0-0-0-2",
-                                icon: <CarryOutOutlined />
-                            }
-                        ]
-                    },
-                    {
-                        title: "parent 1-1",
-                        key: "0-0-1",
-                        icon: <CarryOutOutlined />,
-                        children: [
-                            {
-                                title: "leaf",
-                                key: "0-0-1-0",
-                                icon: <CarryOutOutlined />
-                            }
-                        ]
-                    },
-                    {
-                        title: "parent 1-2",
-                        key: "0-0-2",
-                        icon: <CarryOutOutlined />,
-                        children: [
-                            {
-                                title: "leaf",
-                                key: "0-0-2-0",
-                                icon: <CarryOutOutlined />
-                            },
-                            {
-                                title: "leaf",
-                                key: "0-0-2-1",
-                                icon: <CarryOutOutlined />,
-                                switcherIcon: <FormOutlined />
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                title: "parent 2",
-                key: "0-1",
-                icon: <CarryOutOutlined />,
-                children: [
-                    {
-                        title: "parent 2-0",
-                        key: "0-1-0",
-                        icon: <CarryOutOutlined />,
-                        children: [
-                            {
-                                title: "leaf",
-                                key: "0-1-0-0",
-                                icon: <CarryOutOutlined />
-                            },
-                            {
-                                title: "leaf",
-                                key: "0-1-0-1",
-                                icon: <CarryOutOutlined />
-                            }
-                        ]
-                    }
-                ]
-            }
-        ],
-        []
-    );
-
     const vaultEdit = useVaultEditInterface(sourceID);
+
+    const groupFacadesLoader = useCallback(async () => {
+        return sidebarType === SidebarType.GroupTree
+            ? vaultEdit.getAllGroups()
+            : [];
+    }, [vaultEdit, sidebarType]);
+    const { result: groupFacades } = useAsync(groupFacadesLoader);
+    const [openedGroups, setOpenedGroups] = useState<Array<GroupID>>([]);
+    const groupTree = useMemo(() => {
+        if (!groupFacades) return [];
+        return groupFacadesToTree(groupFacades, openedGroups);
+    }, [groupFacades, openedGroups]);
+
+    const [groupTreeSelectedGroupID, setGroupTreeSelectedGroupID] = useState<GroupID | null>(null);
+    useEffect(() => {
+        const firstID = groupTree[0]?.key ?? null;
+        // Check if none selected - select first
+        if (!groupTreeSelectedGroupID) {
+            setGroupTreeSelectedGroupID(firstID);
+            return;
+        }
+        // Check if still exists
+        const existing = groupFacades?.find(facade => facade.id === groupTreeSelectedGroupID);
+        if (!existing) {
+            setGroupTreeSelectedGroupID(firstID);
+        }
+    }, [groupTreeSelectedGroupID, groupTree, groupFacades]);
+
     const entryLoader = useCallback(async () => {
+        if (sidebarType === SidebarType.GroupTree) {
+            return groupTreeSelectedGroupID ? vaultEdit.getGroupEntryDetails(groupTreeSelectedGroupID) : [];
+        }
         return vaultEdit.getAllEntryDetails();
-    }, [vaultEdit]);
+    }, [vaultEdit, sidebarType, groupTreeSelectedGroupID]);
 
     const {
         result: entries,
         running: fetchingEntries,
         runs: entryFetchCount
     } = useAsync(entryLoader);
+
+    const listRef = useRef<HTMLDivElement | null>(null);
+    const entriesListKey = useMemo(() => {
+        if (sidebarType === SidebarType.GroupTree) {
+            return `${sidebarType}:${groupTreeSelectedGroupID ?? "-"}`;
+        }
+        return sidebarType;
+    }, [sidebarType, groupTreeSelectedGroupID]);
+    useEffect(() => {
+        if (listRef.current) {
+            listRef.current.scrollTo(0, 0);
+        }
+    }, [entriesListKey]);
 
     const entryList = useMemo(
         () =>
@@ -316,11 +265,14 @@ export function VaultPage() {
                             )}
                             {sidebarType === SidebarType.GroupTree && (
                                 <Tree
-                                    showLine
+                                    // defaultExpandedKeys={["0-0-0"]}
+                                    expandedKeys={openedGroups}
+                                    onExpand={(expanded) => setOpenedGroups(expanded.map(item => item.toString()))}
+                                    onSelect={(selected) => setGroupTreeSelectedGroupID(selected[0]?.toString() ?? null)}
+                                    selectedKeys={groupTreeSelectedGroupID ? [groupTreeSelectedGroupID] : []}
                                     showIcon
-                                    defaultExpandedKeys={["0-0-0"]}
-                                    onSelect={() => {}}
-                                    treeData={treeData}
+                                    showLine
+                                    treeData={groupTree}
                                 />
                             )}
                             {sidebarType === SidebarType.TagCloud && (
@@ -401,17 +353,23 @@ export function VaultPage() {
                     defaultSize={VAULT_EDIT_MIN_WIDTH_ENTRIES}
                     size={config?.vaultEditSplitEntriesWidth}
                 >
-                    <Layout>
+                    <Layout
+                        style={{
+                            height: "100%"
+                        }}
+                    >
                         <Layout.Content
                             style={{
                                 background: colorBgContainer,
                                 height: "100%",
-                                overflowY: "scroll",
-                                padding: "0 16px"
+                                overflow: "hidden",
+                                // overflowY: "scroll",
+                                // padding: "0 16px"
                             }}
                         >
                             <List
                                 dataSource={entryList}
+                                ref={listRef}
                                 renderItem={(item) => (
                                     <ListItemClickable
                                         key={item.id}
@@ -428,6 +386,11 @@ export function VaultPage() {
                                         <div>Content</div>
                                     </ListItemClickable>
                                 )}
+                                style={{
+                                    height: "100%",
+                                    overflowY: "scroll",
+                                    padding: "0 16px"
+                                }}
                             />
                         </Layout.Content>
                     </Layout>

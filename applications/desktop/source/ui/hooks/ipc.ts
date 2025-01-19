@@ -24,16 +24,20 @@ export function useIPCCall<Name extends keyof IPCInterface>(
         null
     );
 
+    const runningRef = useRef<boolean>(false);
+
     const execute = useCallback(
         (...args: Parameters<IPCInterface[Name]>) => {
-            if (status !== "idle") return;
+            if (runningRef.current) return;
             setError(null);
             setResult(null);
             setStatus("running");
+            runningRef.current = true;
 
             executeIPCHandler(name, ...args)
                 .then((newResult) => {
                     setStatus("idle");
+                    runningRef.current = false;
                     setResult(newResult);
 
                     if (callback) {
@@ -43,13 +47,14 @@ export function useIPCCall<Name extends keyof IPCInterface>(
                 .catch((err) => {
                     setError(err.message);
                     setStatus("idle");
+                    runningRef.current = false;
 
                     if (callback) {
                         callback(err.message, null);
                     }
                 });
         },
-        [name, callback, status]
+        [name, callback]
     );
 
     return useMemo(

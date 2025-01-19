@@ -1,4 +1,4 @@
-import { EntryID, VaultSourceID } from "@buttercup/core";
+import { EntryID, GroupID, VaultSourceID } from "@buttercup/core";
 import { useCallback, useMemo } from "react";
 import { executeIPCHandler } from "../ipc/handler.js";
 import { VaultEditInterface } from "../../shared/vaultEdit/types.js";
@@ -26,7 +26,9 @@ export function useVaultEditInterface(
         () => ({
             getAllEntryDetails: async () =>
                 executeCall("getAllEntryDetails", []),
-            getEntry: async (entryID: EntryID) => executeCall("getEntry", [entryID])
+            getAllGroups: async () => executeCall("getAllGroups", []),
+            getEntry: async (entryID: EntryID) => executeCall("getEntry", [entryID]),
+            getGroupEntryDetails: async (groupID: GroupID) => executeCall("getGroupEntryDetails", [groupID])
         }),
         [executeCall]
     );

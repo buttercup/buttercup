@@ -4,7 +4,7 @@ import { Descriptions } from "antd";
 import { DescriptionsItemType } from "antd/es/descriptions/index.js";
 import { sortAndFilterProperties } from "../../../../library/entryProperties.js";
 import { getUIEntryTypes } from "../../../../library/entryTypes.jsx";
-import { PASSWORD_MASK } from "../util.js";
+import { PASSWORD_MASK } from "../util.jsx";
 
 interface EntryDetailsDefaultProps {
     entry: EntryFacade;

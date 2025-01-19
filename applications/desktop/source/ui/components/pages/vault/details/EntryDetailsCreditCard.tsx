@@ -1,9 +1,9 @@
-import { EntryFacade, EntryPropertyType, EntryPropertyValueType } from "@buttercup/core";
+import { EntryFacade, EntryPropertyValueType } from "@buttercup/core";
 import React, { useMemo } from "react";
-import { Card, Descriptions, Typography } from "antd";
+import { Descriptions } from "antd";
 import { DescriptionsItemType } from "antd/es/descriptions/index.js";
 import { getUIEntryTypes } from "../../../../library/entryTypes.jsx";
-import { PASSWORD_MASK } from "../util.js";
+import { PASSWORD_MASK } from "../util.jsx";
 import { sortAndFilterProperties } from "../../../../library/entryProperties.js";
 
 interface EntryDetailsCreditCardProps {
