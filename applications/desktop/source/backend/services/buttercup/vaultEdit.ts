@@ -1,6 +1,17 @@
-import { createEntryFacade, createGroupFacade, EntryID, GroupID, VaultSource, VaultSourceID, VaultSourceStatus } from "@buttercup/core";
+import {
+    createEntryFacade,
+    createGroupFacade,
+    EntryID,
+    GroupID,
+    VaultSource,
+    VaultSourceID,
+    VaultSourceStatus
+} from "@buttercup/core";
 import { getVaultManager } from "./management.js";
-import { VaultEditInterface } from "../../../shared/vaultEdit/types.js";
+import {
+    EntryDetails,
+    VaultEditInterface
+} from "../../../shared/vaultEdit/types.js";
 import { getEntryDomain } from "../../library/entry.js";
 
 export async function getAllEntryDetails(
@@ -8,22 +19,25 @@ export async function getAllEntryDetails(
 ): ReturnType<VaultEditInterface["getAllEntryDetails"]> {
     const source = getUnlockedSource(sourceID);
 
-    return source.vault.getAllEntries().map((entry) => {
-        const title = entry.getProperty("title") ?? "";
-        const domain = getEntryDomain(entry);
+    return source.vault
+        .getAllEntries()
+        .map((entry) => {
+            const title = entry.getProperty("title") ?? "";
+            const domain = getEntryDomain(entry);
 
-        return {
-            icon: domain
-                ? {
-                      domain,
-                      type: "domain"
-                  }
-                : null,
-            id: entry.id,
-            title,
-            type: entry.getType()
-        };
-    });
+            return {
+                icon: domain
+                    ? {
+                          domain,
+                          type: "domain"
+                      }
+                    : null,
+                id: entry.id,
+                title,
+                type: entry.getType()
+            } satisfies EntryDetails;
+        })
+        .sort((a, b) => a.title.localeCompare(b.title));
 }
 
 export async function getAllGroups(
@@ -32,10 +46,13 @@ export async function getAllGroups(
     const source = getUnlockedSource(sourceID);
 
     const groups = source.vault.getAllGroups();
-    return groups.map(group => createGroupFacade(group));
+    return groups.map((group) => createGroupFacade(group));
 }
 
-export async function getEntry(sourceID: VaultSourceID, entryID: EntryID): ReturnType<VaultEditInterface["getEntry"]> {
+export async function getEntry(
+    sourceID: VaultSourceID,
+    entryID: EntryID
+): ReturnType<VaultEditInterface["getEntry"]> {
     const source = getUnlockedSource(sourceID);
 
     const entry = source.vault.findEntryByID(entryID);
@@ -67,8 +84,8 @@ export async function getGroupEntryDetails(
             id: entry.id,
             title,
             type: entry.getType()
-        };
-    });
+        } satisfies EntryDetails;
+    }).sort((a, b) => a.title.localeCompare(b.title));
 }
 
 function getUnlockedSource(sourceID: VaultSourceID): VaultSource {
