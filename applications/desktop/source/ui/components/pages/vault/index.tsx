@@ -31,6 +31,8 @@ import { VaultEntry } from "./VaultEntry.jsx";
 import { VAULT_EDIT_MIN_WIDTH_DETAILS, VAULT_EDIT_MIN_WIDTH_ENTRIES, VAULT_EDIT_MIN_WIDTH_MENU } from "../../../../shared/symbols.js";
 import { useConfig } from "../../../hooks/config.js";
 import { groupFacadesToTree } from "./util.jsx";
+import { useIPCCall } from "../../../hooks/ipc.js";
+import { useVaultState } from "../../../hooks/vaultState.js";
 
 enum SidebarType {
     MainMenu = "menu",
@@ -120,6 +122,16 @@ export function VaultPage() {
     if (!sourceID) {
         throw new Error("Vault source ID required for vault page");
     }
+
+    const { execute: executeEnterVault } = useIPCCall("enter_vault");
+    useEffect(() => {
+        executeEnterVault(sourceID);
+    }, [executeEnterVault, sourceID]);
+
+    const vaultState = useVaultState();
+    useEffect(() => {
+        console.log("Vault state changed:", vaultState.source);
+    }, [vaultState]);
 
     const [sidebarType, setSidebarType] = useState<SidebarType>(
         SidebarType.MainMenu

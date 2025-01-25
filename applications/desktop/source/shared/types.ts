@@ -52,6 +52,7 @@ export interface DatasourceConfig {
 
 export interface IPCInterface {
     emit_frontend_log: (level: LogLevel, message: string) => void;
+    enter_vault: (sourceID: VaultSourceID) => void;
     execute_vault_edit_action: <Method extends keyof VaultEditInterface>(
         sourceID: VaultSourceID,
         method: Method,
@@ -59,6 +60,7 @@ export interface IPCInterface {
     ) => Promise<Awaited<ReturnType<VaultEditInterface[Method]>>>;
     get_config: () => Config;
     get_vaults_list: () => Array<VaultSourceDescription>;
+    get_vault_window_state: () => VaultState;
     local_file_add_existing: (
         name: string,
         filePath: string,
@@ -138,4 +140,8 @@ export interface VaultSourceDescription {
     type: SourceType;
     order: number;
     format?: VaultFormatID;
+}
+
+export interface VaultState {
+    source: "reading" | "saving" | "idle";
 }
