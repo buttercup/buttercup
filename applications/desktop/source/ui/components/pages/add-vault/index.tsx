@@ -17,8 +17,8 @@ export function AddVaultPage() {
     return (
         <NestedPageLayout
             breadcrumbs={[
-                { path: "/", text: "Home" },
-                { path: null, text: "Add Vault" }
+                { key: "home", path: "/", text: "Home" },
+                { key: "add-vault", path: null, text: "Add Vault" }
             ]}
         >
             {type === SourceType.File && <LocalFileRouter />}

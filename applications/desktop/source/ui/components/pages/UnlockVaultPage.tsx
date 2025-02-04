@@ -57,8 +57,8 @@ export function UnlockVaultPage() {
     return (
         <NestedPageLayout
             breadcrumbs={[
-                { path: "/", text: "Home" },
-                { path: null, text: "Unlock Vault" }
+                { key: "home", path: "/", text: "Home" },
+                { key: "unlock-vault", path: null, text: "Unlock Vault" }
             ]}
         >
             <Flex

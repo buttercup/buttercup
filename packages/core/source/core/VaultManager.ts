@@ -1,4 +1,4 @@
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "eventemitter3";
 import { Layerr } from "layerr";
 import isPromise from "is-promise";
 import { ChannelQueue } from "@buttercup/channel-queue";
@@ -393,6 +393,7 @@ export class VaultManager extends EventEmitter {
         return this.enqueueStateChange(async () => {
             const updateableSources = this.getUpdateableSources();
             if (updateableSources.length <= 0) {
+                this.emit("autoUpdateStop");
                 return;
             }
             await Promise.all(

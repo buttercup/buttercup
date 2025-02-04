@@ -1,4 +1,4 @@
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "eventemitter3";
 import { ChannelQueue } from "@buttercup/channel-queue";
 import { Layerr } from "layerr";
 import { Vault } from "./Vault.js";
@@ -789,7 +789,22 @@ export class VaultSource extends EventEmitter {
 
     _enqueueStateChange(cb: StateChangeEnqueuedFunction, stack?: string): Promise<any> {
         const channel = this._queue.channel("state");
-        return stack ? channel.enqueue(cb, undefined, stack) : channel.enqueue(cb);
+        if (channel.isEmpty) {
+            this.emit("state-change-start");
+        }
+
+        const wrappedCallback = () => {
+            if (channel.isEmpty) {
+                this.emit("state-change-stop");
+            }
+            cb();
+        };
+
+        try {
+            return stack ? channel.enqueue(wrappedCallback, undefined, stack) : channel.enqueue(wrappedCallback);
+        } catch (err) {
+            throw err;
+        }
     }
 
     _unloadShares() {

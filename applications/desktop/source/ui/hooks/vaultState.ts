@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ipcRenderer } from "electron";
 import { VaultState } from "../../shared/types.js";
 import { useRepeatingIPCCall } from "./ipc.js";
 import { naiveDeepEqual } from "../../shared/library/equality.js";
@@ -20,6 +21,19 @@ export function useVaultState(): VaultState {
             setLastState(structuredClone(result));
         }
     }, [lastState, result]);
+
+    useEffect(() => {
+        const handler = (_: unknown, newState: VaultState) => {
+            console.log("SET STATE FROM IPC", newState);
+            setLastState(structuredClone(newState));
+        };
+
+        ipcRenderer.on("vault-window-state", handler);
+
+        return () => {
+            ipcRenderer.off("vault-window-state", handler);
+        };
+    }, []);
 
     return lastState;
 }

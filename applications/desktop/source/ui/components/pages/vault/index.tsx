@@ -33,6 +33,7 @@ import { useConfig } from "../../../hooks/config.js";
 import { groupFacadesToTree } from "./util.jsx";
 import { useIPCCall } from "../../../hooks/ipc.js";
 import { useVaultState } from "../../../hooks/vaultState.js";
+import { VaultTitle } from "./VaultTitle.jsx";
 
 enum SidebarType {
     MainMenu = "menu",
@@ -263,6 +264,7 @@ export function VaultPage() {
                             height: "100%"
                         }}
                     >
+                        <VaultTitle vaultStatus={vaultState.source} />
                         <div style={{ flex: "1 1 auto", overflowY: "scroll" }}>
                             {sidebarType === SidebarType.MainMenu && (
                                 <Menu

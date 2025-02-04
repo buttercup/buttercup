@@ -46,7 +46,10 @@ module.exports = [
                 },
                 {
                     test: /\.(jpe?g|gif|png|svg|woff|woff2)$/,
-                    type: "asset/resource"
+                    type: "asset/resource",
+                    // generator: {
+                    //     filename: ""
+                    // }
                 }
             ]
         },
@@ -54,7 +57,7 @@ module.exports = [
         output: {
             filename: "ui.js",
             path: path.resolve(DIRNAME, "./dist/ui"),
-            assetModuleFilename: "[path][name].[hash][ext]"
+            assetModuleFilename: "asset/[name].[hash][ext]"
         },
 
         plugins: [

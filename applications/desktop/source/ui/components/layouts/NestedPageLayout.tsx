@@ -4,6 +4,7 @@ import { styled } from "styled-components";
 
 interface NestedPageLayoutProps {
     breadcrumbs: Array<{
+        key: string;
         path: string | null;
         text: string;
     }>;
@@ -37,6 +38,7 @@ export function NestedPageLayout(props: NestedPageLayoutProps) {
                 >
                     {props.breadcrumbs.map((breadcrumb) => (
                         <BreadcrumbItem
+                            key={breadcrumb.key}
                             href={
                                 breadcrumb.path
                                     ? `#${breadcrumb.path}`

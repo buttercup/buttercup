@@ -51,3 +51,14 @@ export function setVaultWindowSourceID(win: BrowserWindow, sourceID: VaultSource
 
     target.sourceID = sourceID;
 }
+
+export function setVaultWindowStateBySource(sourceID: VaultSourceID, source: VaultState["source"]): boolean {
+    const vaultWindow = __windows.find(item => item.sourceID === sourceID);
+    if (!vaultWindow) return false;
+
+    vaultWindow.state.source = source;
+
+    vaultWindow.window.webContents.send("vault-window-state", vaultWindow.state);
+
+    return true;
+}

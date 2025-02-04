@@ -143,5 +143,5 @@ export interface VaultSourceDescription {
 }
 
 export interface VaultState {
-    source: "reading" | "saving" | "idle";
+    source: "saving" | "idle";
 }
